@@ -1,6 +1,5 @@
 var kafka = require('kafka-node')
 var ConsumerGroup = kafka.ConsumerGroup
-var Client = kafka.Client
 
 var options = {
   kafkaHost: 'localhost:29092',
