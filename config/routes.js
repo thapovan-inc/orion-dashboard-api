@@ -21,11 +21,12 @@ exports['default'] = {
         { path: '/login/:userID(^\\d{3}$)', action: 'login' } // (POST) /api/login/123
       ],
 
-      all: [
-        { path: '/user/:userID', action: 'user', matchTrailingPathParts: true } // (*) /api/user/123, api/user/123/stuff
-      ]
-
       ---------------------- */
+
+      all: [
+        { path: '/traces/:traceId', action: 'getTraceById', matchTrailingPathParts: true }, // (*) /api/user/123, api/user/123/stuff
+        { path: '/traces', action: 'getTraces', matchTrailingPathParts: true } // (*) /api/user/123, api/user/123/stuff
+      ]
 
     }
   }
