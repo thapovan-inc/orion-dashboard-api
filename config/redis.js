@@ -26,7 +26,7 @@ exports['default'] = {
     }
 
     return {
-      enabled: true,
+      enabled: false,
 
       '_toExpand': false,
       client: {

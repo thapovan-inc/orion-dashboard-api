@@ -1,6 +1,6 @@
 'use strict'
 const {api, Initializer} = require('actionhero')
-const Kafka = require('../lib/kafka')
+const Kafka = require('../lib/Kafka')
 var kafkaObj = new Kafka()
 
 const broadcastLifeFeed = (message) => {
@@ -24,13 +24,13 @@ class MyInitializer extends Initializer {
   }
 
   async start () {
-    await api.lifeFeed.doAThing()
+    api.lifeFeed.doAThing()
     kafkaObj.startConsumer(broadcastLifeFeed)
     api.log('I started', 'debug', this.name)
   }
 
   async stop () {
-    await api.lifeFeed.stopStuff()
+    api.lifeFeed.stopStuff()
     kafkaObj.stopConsumer()
     api.log('I stopped', 'debug', this.name)
   }

@@ -9,7 +9,15 @@ module.exports = class TraceInfo extends Action {
   }
 
   async run (data) {
-    var requestStatistics = {traceId: uuidv4(), requestTime: Date.now(), duration: 1, status: 'PASS'}
-    data.response.data = requestStatistics
+    try {
+      _es.getAllTraces(sendData)
+    } catch (err) {
+      console.log('err : ', err)
+    }
+
   }
+}
+
+const sendData = (result) => {
+  console.log(result)
 }
