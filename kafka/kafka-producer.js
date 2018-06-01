@@ -17,24 +17,30 @@ var apiAggregation = {
 var apiAggregationBuffer = Buffer.from(JSON.stringify(apiAggregation))
 
 producer.on('ready', function () {
+  var index = 0;
   setInterval(() => {
     var requestStatistics = {
       traceId: uuidv4(),
       requestTime: Date.now(),
       duration: durations[getValue(durations)],
-      status: status[getValue(status)]
+      status: status[getValue(status)],
+      index: index
     }
+
     var requestStatisticsBuffer = Buffer.from(JSON.stringify(requestStatistics))
     var payloads = [
       {topic: 'requestStatistics', messages: requestStatisticsBuffer},
       {topic: 'apiAggregation', messages: apiAggregationBuffer}
     ]
+
     producer.send(payloads, function (err, data) {
       if (err) {
         console.log(err)
       }
       console.log(data)
     })
+    index++;
+
   }, 1000)
 })
 

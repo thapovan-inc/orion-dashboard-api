@@ -17,6 +17,8 @@ services:
 #    environment:
 #      TCP_PORTS: 8080,5000
 #      ENABLE_TCP_SERVER: "true"
+#      KAFKA_HOST: 'localhost:29092'
+#      KAFKA_TOPIC: 'requestStatistics'
 #      REDIS_HOST: redis
 #      REDIS_PORT: 6379
 #      REDIS_DB: 0
