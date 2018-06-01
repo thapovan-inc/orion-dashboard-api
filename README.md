@@ -12,3 +12,18 @@
 
 ## To Test:
 `npm test`
+
+# Kafka project
+
+## To build:
+ `docker-compose build`
+
+## To run the docker
+ `docker-compose up -d`
+
+## To produce the test data - use kafka script
+ ### Go to kafka folder in terminal command by
+    `cd kafka`
+  ### run kafka script in node js
+    `node kafka-producer.js`
+
