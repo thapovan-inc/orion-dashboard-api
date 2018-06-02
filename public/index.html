@@ -117,7 +117,7 @@
                 
                 <div class="main-wrapper">
                 	<section id="charts">
-                    	<canvas id="livefeed" style="height:400px !important;">
+                    	<canvas id="livefeed" style="height:400px !important;" v-on:click="getAccordionDetails">
 
                         </canvas>
                     </section>
@@ -157,131 +157,133 @@
                     </section>
                     <section class="accordion-sectio">
                     	<ul class="accordion">
-                            <li>
-                            	<a class="toggle collapse error" href="javascript:void(0);">Paltalk : / signup</a>
-                                <ul class="inner">
-                                    <li>
-                                    	<div class="label">Trace ID</div>
-                                    	<div class="value">43ffeea3-e2e8-4038-b697-795d94e6094a</div>
-                                    </li>
-                                    <li>
-                                    	<div class="label">Device Info</div>
-                                        <div class="value">
-                                        	<ul>
-                                            	<li>
-                                                	<span>Model</span>
-                                                    <span>GT-P5100</span>
-                                                </li>
-                                                <li>
-                                                    <span>Phone Type</span>
-                                                    <span>Tablet</span>
-                                                </li>
-                                                <li>
-                                                    <span>Brand</span>
-                                                    <span>Samsung</span>
-                                                </li>
-                                                <li>
-                                                    <span>Screen Size</span>
-                                                    <span>1280 x 752</span>
-                                                </li>
-                                                <li>
-                                                    <span>Android Version</span>
-                                                    <span>4.0.3</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li>
-                                    	<div class="label">Location</div>
-                                    	<div class="value">Chennai</div>
-                                    </li>                           
-                                    <li>
-                                        <a class="toggle collapse error" href="javascript:void(0);">LIFE CYCLE</a>
-                                        <ul class="inner">
-                                            <li>
-                                            	<a class="toggle collapse error" href="javascript:void(0);">Mobile signup</a>
-                                                <ul class="inner">
+                            <div>
+                                <li>
+                                    <a class="toggle collapse error" href="javascript:void(0);" v-for="trace in result">Paltalk : / signup</a>
+                                    <ul class="inner">
+                                        <li>
+                                            <div class="label">Trace ID</div>
+                                            <div class="value">{{ trace.traceId }} </div>
+                                        </li>
+                                        <li>
+                                            <div class="label">Device Info</div>
+                                            <div class="value">
+                                                <ul>
                                                     <li>
-                                                        <a class="error" href="javascript:void(0);">Proxy server</a>
+                                                        <span>Model</span>
+                                                        <span>GT-P5100</span>
                                                     </li>
                                                     <li>
-                                                        <a class="toggle collapse success" href="javascript:void(0);">Auth service</a>
-                                                        <ul class="inner">
-                                                            <li>
-                                                                <a class="error" href="javascript:void(0);">Signup</a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="toggle collapse success" href="javascript:void(0);">Create User</a>
-                                                                <ul class="inner">
-                                                                    <li>
-                                                                        <div class="list-items">
-                                                                            <ul>
-                                                                                <li>
-                                                                                    <span>Model</span>
-                                                                                    <span>GT-P5100</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Phone Type</span>
-                                                                                    <span>Tablet</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Brand</span>
-                                                                                    <span>Samsung</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Screen Size</span>
-                                                                                    <span>1280 x 752</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Android Version</span>
-                                                                                    <span>4.0.3</span>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div class="list-items">
-                                                                            <ul>
-                                                                                <li>
-                                                                                    <span>Model</span>
-                                                                                    <span>GT-P5100</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Phone Type</span>
-                                                                                    <span>Tablet</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Brand</span>
-                                                                                    <span>Samsung</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Screen Size</span>
-                                                                                    <span>1280 x 752</span>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <span>Android Version</span>
-                                                                                    <span>4.0.3</span>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </li>
-                                                        </ul>
+                                                        <span>Phone Type</span>
+                                                        <span>Tablet</span>
+                                                    </li>
+                                                    <li>
+                                                        <span>Brand</span>
+                                                        <span>Samsung</span>
+                                                    </li>
+                                                    <li>
+                                                        <span>Screen Size</span>
+                                                        <span>1280 x 752</span>
+                                                    </li>
+                                                    <li>
+                                                        <span>Android Version</span>
+                                                        <span>4.0.3</span>
                                                     </li>
                                                 </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                            	</ul>
-                            </li>                            
-                            <li>
-                                <a class="toggle collapse success" href="javascript:void(0);">Paltalk : / products</a>
-                            </li>                            
-                            <li>
-                            	<a class="toggle collapse success" href="javascript:void(0);">Paltalk : / orderplaced</a>
-                            </li>                            
-                            <li>
-                            	<a class="toggle collapse success" href="javascript:void(0);">Paltalk : / signin</a>
-                        	</li>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="label">Location</div>
+                                            <div class="value">Chennai</div>
+                                        </li>
+                                        <li>
+                                            <a class="toggle collapse error" href="javascript:void(0);">LIFE CYCLE</a>
+                                            <ul class="inner">
+                                                <li>
+                                                    <a class="toggle collapse error" href="javascript:void(0);">Mobile signup</a>
+                                                    <ul class="inner">
+                                                        <li>
+                                                            <a class="error" href="javascript:void(0);">Proxy server</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="toggle collapse success" href="javascript:void(0);">Auth service</a>
+                                                            <ul class="inner">
+                                                                <li>
+                                                                    <a class="error" href="javascript:void(0);">Signup</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="toggle collapse success" href="javascript:void(0);">Create User</a>
+                                                                    <ul class="inner">
+                                                                        <li>
+                                                                            <div class="list-items">
+                                                                                <ul>
+                                                                                    <li>
+                                                                                        <span>Model</span>
+                                                                                        <span>GT-P5100</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Phone Type</span>
+                                                                                        <span>Tablet</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Brand</span>
+                                                                                        <span>Samsung</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Screen Size</span>
+                                                                                        <span>1280 x 752</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Android Version</span>
+                                                                                        <span>4.0.3</span>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div class="list-items">
+                                                                                <ul>
+                                                                                    <li>
+                                                                                        <span>Model</span>
+                                                                                        <span>GT-P5100</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Phone Type</span>
+                                                                                        <span>Tablet</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Brand</span>
+                                                                                        <span>Samsung</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Screen Size</span>
+                                                                                        <span>1280 x 752</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <span>Android Version</span>
+                                                                                        <span>4.0.3</span>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="toggle collapse success" href="javascript:void(0);">Paltalk : / products</a>
+                                </li>
+                                <li>
+                                    <a class="toggle collapse success" href="javascript:void(0);">Paltalk : / orderplaced</a>
+                                </li>
+                                <li>
+                                    <a class="toggle collapse success" href="javascript:void(0);">Paltalk : / signin</a>
+                                </li>
+                            </div>
                         </ul>
                     </section>
                 </div>
@@ -293,9 +295,42 @@
 
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
-
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script type="text/javascript" src="/public/javascript/ActionheroWebsocketClient.min.js"></script>
 <script type="text/javascript">
+
+  var app = new Vue({
+    el: '#orion',
+    data: {
+      result: {data:[]},
+      myScatter: null,
+      accodion: {data:[]}
+    },
+    methods:{
+      getAccordionDetails: function (event) {
+        var activePoints = this.myScatter.getElementsAtEvent(event);
+        var firstPoint = activePoints[0];
+        value = this.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+//        console.log(JSON.stringify(value));
+        var self = this;
+        axios.get('/api', {
+          params: {
+            action: 'getTraceById',
+            traceId: value.traceId
+          }
+        })
+          .then(function (response) {
+            self.result.data=response;
+            console.log(" responce= " + response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      }
+  });
+
   var color = Chart.helpers.color;
   var scatterChartData = {
 
@@ -370,17 +405,31 @@ $(document).ready(function () {
 
   boot();
   var ctx = document.getElementById('livefeed').getContext('2d');
-  window.myScatter = Chart.Scatter(ctx, {
+  app.myScatter = Chart.Scatter(ctx, {
     data: scatterChartData,
     options: chartOptions
   });
 
-  document.getElementById("livefeed").onclick = function(evt){
-    var activePoints = window.myScatter.getElementsAtEvent(evt);
-    var firstPoint = activePoints[0];
-    var value = window.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-    console.log(JSON.stringify(value));
-  }
+//  document.getElementById("livefeed").onclick = function(evt){
+//    var activePoints = window.myScatter.getElementsAtEvent(evt);
+//    var firstPoint = activePoints[0];
+//    value = window.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+//    console.log(JSON.stringify(value));
+//
+//    axios.get('/api', {
+//      params: {
+//        action: 'getTraceById',
+//        traceId: value.traceId
+//      }
+//    })
+//      .then(function (response) {
+//        app.result.data=response;
+//        console.log(response);
+//      })
+//      .catch(function (error) {
+//        console.log(error);
+//      });
+//  }
 
 });
 $('.toggle').click(function(e) {
@@ -441,30 +490,33 @@ $('.toggle').click(function(e) {
 
       switch (status){
         case 'PASS' :
-          window.myScatter.data.datasets[1].data.push({
+          app.myScatter.data.datasets[1].data.push({
             x: trace.requestTime,
-            y: trace.duration
+            y: trace.duration,
+            traceId: trace.traceId
           })
-          if(window.myScatter.data.datasets[1].data.length > 50) {
-            window.myScatter.data.datasets[1].data = window.myScatter.data.datasets[1].data.splice(1);
+          if(app.myScatter.data.datasets[1].data.length > 50) {
+            app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
           }
           break;
         case 'FAIL' :
-          window.myScatter.data.datasets[0].data.push({
+          app.myScatter.data.datasets[0].data.push({
             x: trace.requestTime,
-            y: trace.duration
+            y: trace.duration,
+            traceId: trace.traceId
           })
-          if(window.myScatter.data.datasets[0].data.length > 50) {
-            window.myScatter.data.datasets[0].data = window.myScatter.data.datasets[0].data.splice(1);
+          if(app.myScatter.data.datasets[0].data.length > 50) {
+            app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
           }
           break;
         case 'SLOW':
-          window.myScatter.data.datasets[2].data.push({
+          app.myScatter.data.datasets[2].data.push({
             x: trace.requestTime,
-            y: trace.duration
+            y: trace.duration,
+            traceId: trace.traceId
           })
-          if(window.myScatter.data.datasets[2].data.length > 50) {
-            window.myScatter.data.datasets[2].data = window.myScatter.data.datasets[2].data.splice(1);
+          if(app.myScatter.data.datasets[2].data.length > 50) {
+            app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
           }
           break;
       }
@@ -472,7 +524,7 @@ $('.toggle').click(function(e) {
 //      console.log('fail:' + JSON.stringify(statusFail));
 //      console.log('slow:' + JSON.stringify(statusSlow));
       //console.log(window.myScatter.data.datasets[0].data);
-      window.myScatter.update();
+      app.myScatter.update();
 
     }
   }
