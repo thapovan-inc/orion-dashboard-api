@@ -427,8 +427,6 @@ $('.toggle').click(function(e) {
   var appendMessage = function(message){
 
     var trace = JSON.parse(message.message)
-    console.log(trace);
-
     if (trace.traceId && trace.status){
       var status = trace.status;
 
