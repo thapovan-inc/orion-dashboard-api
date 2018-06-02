@@ -2,10 +2,13 @@ var kafka = require('kafka-node'),
   HighLevelProducer = kafka.HighLevelProducer,
   client = new kafka.Client('localhost:32181'),
   producer = new HighLevelProducer(client)
-const uuidv4 = require('uuid/v4')
 
+const uuidv4 = require('uuid/v4')
 var durations = [1, 2, 3, 4, 5]
 var status = ['PASS', 'SLOW', 'FAIL']
+var serviceName = ['Signin', 'Signup', 'products', 'orderPlacement', 'checkData']
+var country = ['india', 'usa', 'srilanka', 'pakistan', 'malasia', 'butan', 'uae']
+var ip = ['127.0.0.1', '192.168.1.198', '192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4']
 
 var apiAggregation = {
   data: [
@@ -24,6 +27,11 @@ producer.on('ready', function () {
       requestTime: Date.now(),
       duration: durations[getValue(durations)],
       status: status[getValue(status)],
+      email: 'test'+index+'.gmail.com',
+      userId: index,
+      serviceName: serviceName[getValue(serviceName)],
+      country: country[getValue(country)],
+      ip: ip[getValue(ip)],
       index: index
     }
 

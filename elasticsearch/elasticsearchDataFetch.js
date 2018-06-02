@@ -34,7 +34,7 @@ class elasticsearch {
     }
   }
 
-  getAllTraces (callback, data) {
+  getAllTraceById (callback, data) {
     try {
       client.search({
         index: 'trace_id',

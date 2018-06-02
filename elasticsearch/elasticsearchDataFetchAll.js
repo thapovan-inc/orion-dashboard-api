@@ -64,6 +64,41 @@ class elasticsearch {
       console.log(err.message)
     }
   }
+
+  getAllTraceByFilters (callback, searchTerm) {
+    allRecords = []
+    var searchTerm = {
+      'traceId': '4bd1acb3-ebd9-43ef-8aa7-260d7af20390',
+      'ip': '192.168.1.1',
+      'country': 'india'
+    }
+    try {
+      client.search({
+        index: 'trace_id',
+        type: 'trace_id',
+        body: {
+          query: {
+            match: {
+              "wildcard" : {searchTerm}
+            }
+          }
+        }
+      }, function getMoreUntilDone (error, response) {
+        if (error) {
+          console.log(error.message)
+          callback(error.message)
+        }
+        // collect all the records
+        response.hits.hits.forEach(function (hit) {
+          allRecords.push(hit)
+        })
+        callback(allRecords)
+      })
+    } catch (err) {
+      callback(err.message)
+      console.log(err.message)
+    }
+  }
 }
 
 module.exports = elasticsearch

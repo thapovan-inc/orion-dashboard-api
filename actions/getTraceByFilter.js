@@ -1,18 +1,18 @@
 const {Action} = require('actionhero')
-const uuidv4 = require('uuid/v4')
 const es = require('../elasticsearch/elasticsearchDataFetchAll')
+
 var _es = new es()
+
 module.exports = class TraceInfo extends Action {
   constructor () {
     super()
-    this.name = 'getTraceById'
-    this.description = 'Will return information on trace by id'
+    this.name = 'getTraces'
+    this.description = 'Will return information of all traces'
   }
 
-  async run (data) {
-    console.log(data);
+  run (data) {
     try {
-      _es.getAllTraceById(sendData)
+      _es.getAllTraceByFilters(sendData, searchTerm)
     } catch (err) {
       console.log('err : ', err)
     }
