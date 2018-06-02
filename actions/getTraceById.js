@@ -1,25 +1,35 @@
-const {Action} = require('actionhero')
-const uuidv4 = require('uuid/v4')
-const es = require('../elasticsearch/elasticsearchDataFetchAll')
+const ActionHero = require('actionhero')
+const es = require('../lib/elasticsearch')
 var _es = new es()
-module.exports = class TraceInfo extends Action {
+
+module.exports = class TraceInfoById extends ActionHero.Action {
   constructor () {
     super()
     this.name = 'getTraceById'
     this.description = 'Will return information on trace by id'
+    this.inputs = {
+      traceId: {
+        required: true
+      }
+    }
   }
 
   async run (data) {
-    console.log(data);
-    try {
-      _es.getAllTraceById(sendData)
-    } catch (err) {
-      console.log('err : ', err)
+    const api = ActionHero.api
+    var responseObject = {
+      success: false
     }
-
+    try {
+      var result = await _es.getAllTraceById()
+      responseObject.data = result
+      responseObject.success = true
+    } catch (err) {
+      responseObject.data = []
+      responseObject.success = err
+      responseObject.error = false
+      api.log('err : ', err)
+    } finally {
+      data.response.result = responseObject
+    }
   }
-}
-
-const sendData = (result) => {
-  console.log(result)
 }
