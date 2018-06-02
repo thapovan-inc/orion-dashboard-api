@@ -375,6 +375,13 @@ $(document).ready(function () {
     options: chartOptions
   });
 
+  document.getElementById("livefeed").onclick = function(evt){
+    var activePoints = window.myScatter.getElementsAtEvent(evt);
+    var firstPoint = activePoints[0];
+    var value = window.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+    console.log(JSON.stringify(value));
+  }
+
 });
 $('.toggle').click(function(e) {
   	e.preventDefault();
@@ -427,7 +434,7 @@ $('.toggle').click(function(e) {
   var appendMessage = function(message){
 
     var trace = JSON.parse(message.message)
-    console.log(trace);
+//    console.log(trace);
 
     if (trace.traceId && trace.status){
       var status = trace.status;
@@ -464,7 +471,7 @@ $('.toggle').click(function(e) {
 //      console.log('pass:' + JSON.stringify(statusPass));
 //      console.log('fail:' + JSON.stringify(statusFail));
 //      console.log('slow:' + JSON.stringify(statusSlow));
-      console.log(window.myScatter.data.datasets[0].data);
+      //console.log(window.myScatter.data.datasets[0].data);
       window.myScatter.update();
 
     }
