@@ -25,6 +25,7 @@ exports['default'] = {
 
       all: [
         { path: '/traces/:traceId', action: 'getTraceById', matchTrailingPathParts: true }, // (*) /api/user/123, api/user/123/stuff
+        { path: '/traces/:searchTerm', action: 'getTraceByFilter', matchTrailingPathParts: true }, // (*) /api/user/123, api/user/123/stuff
         { path: '/traces', action: 'getTraces', matchTrailingPathParts: true } // (*) /api/user/123, api/user/123/stuff
       ]
 

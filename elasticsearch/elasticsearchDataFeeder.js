@@ -7,6 +7,8 @@ const uuidv4 = require('uuid/v4')
 var durations = [1, 2, 3, 4, 5]
 var status = ['PASS', 'SLOW', 'FAIL']
 var serviceName = ['Signin', 'Signup', 'products', 'orderPlacement']
+var country = ['india', 'usa', 'srilanka', 'pakistan', 'malasia', 'butan', 'uae']
+var ip = ['127.0.0.1', '192.168.1.198', '192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4']
 
 var trace_id1 = uuidv4()
 var trace_id2 = uuidv4()
@@ -23,7 +25,9 @@ var requestStatistics = {
   status: status[getValue(status)],
   email: 'test'+getValue(durations)+'.gmail.com',
   userId: trace_id2,
-  userId: serviceName[getValue(serviceName)]
+  serviceName: serviceName[getValue(serviceName)],
+  country: country[getValue(country)],
+  ip: ip[getValue(ip)]
 }
 
 // var requestStatistics = {
@@ -176,7 +180,7 @@ var requestStatistics = {
 // }
 
 client.index({
-  index: 'trace_id',
+  index: 'traces',
   id: trace_id1,
   type: 'trace_id',
   body: requestStatistics
