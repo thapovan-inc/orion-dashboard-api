@@ -1,0 +1,80 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="content-language" content="en" />
+  <meta name="description" content="actionhero.js" />
+  <link href='/public/css/cosmo.css' rel='stylesheet' type='text/css'>
+  <link rel="icon" href="/public/favicon.ico">
+  <link rel="stylesheet" href="/public/css/jquery.jsonview.css" />
+  <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+  <script type="text/javascript" src="/public/javascript/jquery.jsonview.js"></script>
+  <title>actionhero</title>
+
+  <script type="text/javascript" src="/public/javascript/ActionheroWebsocketClient.min.js"></script>
+
+  <script type="text/javascript">
+
+    var client;
+    var boot = function(){
+      client = new ActionheroWebsocketClient();
+
+      client.on('connected',    function(){ console.log('connected!') })
+      client.on('disconnected', function(){ console.log('disconnected :(') })
+
+      client.on('error',        function(error){ console.log('error', error.stack) })
+      client.on('reconnect',    function(){ console.log('reconnect') })
+      client.on('reconnecting', function(){ console.log('reconnecting') })
+      client.on('say',          function(message){ appendMessage(message); })
+
+      client.connect(function(error, details){
+        if (error) {
+          console.error(error);
+        } else {
+          client.action('createChatRoom', {name: 'lifeFeed'}, function(data){
+            client.roomAdd("lifeFeed");
+          });
+        }
+      });
+//      client.roomLeave('lifeFeed');
+//      client.disconnect();
+
+    }
+
+    var jsonArray = [];
+
+    var appendMessage = function(message){
+      if (message.welcome != null){
+        jsonArray = [];
+      }else{
+        message.json = JSON.parse(message.message)
+        jsonArray.push(message)
+      }
+
+      if(jsonArray.length > 100) {
+        jsonArray = jsonArray.splice(1);
+      }
+
+      $("#chatBox").JSONView(jsonArray.reverse());
+    }
+
+  </script>
+
+</head>
+
+<body onload="boot()">
+
+<div class="container">
+  <div class="row">
+
+    <div class="col-md-12">
+      <h1>Real-Time Chat with Actionhero</h1>
+    </div>
+
+    <div class="col-md-8">
+      <div class="chatBox" id="chatBox"></div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

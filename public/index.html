@@ -1,80 +1,474 @@
+	<!doctype html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <meta http-equiv="content-language" content="en" />
-  <meta name="description" content="actionhero.js" />
-  <link href='/public/css/cosmo.css' rel='stylesheet' type='text/css'>
-  <link rel="icon" href="/public/favicon.ico">
-  <link rel="stylesheet" href="/public/css/jquery.jsonview.css" />
-  <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-  <script type="text/javascript" src="/public/javascript/jquery.jsonview.js"></script>
-  <title>actionhero</title>
+<meta charset="utf-8">
+<title>Orion - Tracing tool</title>
+<link type="text/css" rel="stylesheet" href="css/Roboto.css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/orion.css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/pages/dashboard.css" media="all" />
+</head>
 
-  <script type="text/javascript" src="/public/javascript/ActionheroWebsocketClient.min.js"></script>
+<body>
+<div id="orion">
+    <header>	
+        <div class="left-col">
+            <div class="logo">
+                <div class="orion-logo">Orion<span>Tracing tool</span></div>
+            </div>
+            <button type="button" class="toggle-icon" id="sidebarCollapse">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="right-col">
+            <div class="user-details">        	
+                <div class="user-info">
+                    <p>Welcome Vaidy!</p>
+                    <p>Monday, 10th May</p>
+                </div>
+                <div class="thumb">
+                    <img src="images/avatar.png" alt="Vaidy" />
+                </div>
+            </div>
+            <div class="search-container">
+                <div class="search">
+                    <input type="text" name="search" value="Lookup by Trace ID..." />
+                    <a href="javascript:void(0)" class="icon-search"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header -->
 
-  <script type="text/javascript">
+    <div id="content" class="active">
+        <div id="sidebar" class="active">
+            <section>
+                <div class="title">
+                    <h4><i class="icon-dashboard-white"></i> Dashboard</h4>
+                </div>
+                <div class="content">
+                    <div class="search">
+                        <input type="text" name="search" value="Lookup by Trace ID..." />
+                        <a href="javascript:void(0)" class="icon-search"></a>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="title">
+                    <h4>Find Traces</h4>
+                </div>
+                <div class="content">
+                    <div class="form-group">
+                        <label for="service_name">Service  Name</label>
+                        <div class="search">
+                            <input type="text" id="service_name" name="search" value="Service  Name..." />
+                            <a href="javascript:void(0)" class="icon-search"></a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lookback">Lookback</label>
+                        <input type="text" id="lookback" name="search" value="Lookback..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="service_name">Min Duration</label>
+                        <input type="text" id="min_duration" name="search" value="Min Duration..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="service_name">Max Duration</label>
+                        <input type="text" id="max_duration" name="search" value="Max Duration..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="service_name">Limit Result</label>
+                        <input type="text" id="limit_result" name="search" value="Limit Result..." />
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- end sidebar -->
+        
+        <div id="main-content">
+        	<div id="dashboard">
+                <div id="search-section">
+                    <div class="page-title">
+                        <h2><i class="icon-dashboard"></i> Dashboard</h2>
+                    </div>
+                    <div class="search-filters">
+                    	<div class="label">Filter By</div>
+                        <div class="checkbox"> 
+                            <input name="filterby" id="passed" type="checkbox">
+                            <label for="passed">Passed</label>                     
+                        </div>
+                        <div class="checkbox"> 
+                            <input name="filterby" id="slow" type="checkbox">
+                            <label for="slow">Slow</label>                     
+                        </div>
+                        <div class="checkbox"> 
+                            <input name="filterby" id="failed" type="checkbox">
+                            <label for="failed">Failed</label>                     
+                        </div>
+                        <div class="form-group">
+                        	<input type="text" name="location" value="Location" />
+                            <input type="text" name="ip" value="IP" />
+                            <input type="text" name="date" value="Date" />
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="main-wrapper">
+                	<section id="charts">
+                    	<canvas id="livefeed" style="height:400px !important;">
 
-    var client;
-    var boot = function(){
-      client = new ActionheroWebsocketClient();
+                        </canvas>
+                    </section>
+                    <section id="breadcrumbs">
+                    	<div class="status">
+                            <ul class="breadcrumb">
+                                <li><a href="#">Sign Up</a></li>
+                                <li class="success"><a href="#">500</a></li>
+                                <li class="warning"><a href="#">30</a></li>
+                                <li class="error"><a href="#">10</a></li>
+                            </ul>
+                        </div>
+                        <div class="status">
+                            <ul class="breadcrumb">
+                                <li><a href="#">Sign In</a></li>
+                                <li class="success"><a href="#">500</a></li>
+                                <li class="warning"><a href="#">30</a></li>
+                                <li class="error"><a href="#">10</a></li>
+                            </ul>
+                        </div>
+                        <div class="status">
+                            <ul class="breadcrumb">
+                                <li><a href="#">Products</a></li>
+                                <li class="success"><a href="#">500</a></li>
+                                <li class="warning"><a href="#">30</a></li>
+                                <li class="error"><a href="#">10</a></li>
+                            </ul>
+                        </div>
+                        <div class="status">
+                            <ul class="breadcrumb">
+                                <li><a href="#">Order Placement</a></li>
+                                <li class="success"><a href="#">500</a></li>
+                                <li class="warning"><a href="#">30</a></li>
+                                <li class="error"><a href="#">10</a></li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="accordion-sectio">
+                    	<ul class="accordion">
+                            <li>
+                            	<a class="toggle collapse error" href="javascript:void(0);">Paltalk : / signup</a>
+                                <ul class="inner">
+                                    <li>
+                                    	<div class="label">Trace ID</div>
+                                    	<div class="value">43ffeea3-e2e8-4038-b697-795d94e6094a</div>
+                                    </li>
+                                    <li>
+                                    	<div class="label">Device Info</div>
+                                        <div class="value">
+                                        	<ul>
+                                            	<li>
+                                                	<span>Model</span>
+                                                    <span>GT-P5100</span>
+                                                </li>
+                                                <li>
+                                                    <span>Phone Type</span>
+                                                    <span>Tablet</span>
+                                                </li>
+                                                <li>
+                                                    <span>Brand</span>
+                                                    <span>Samsung</span>
+                                                </li>
+                                                <li>
+                                                    <span>Screen Size</span>
+                                                    <span>1280 x 752</span>
+                                                </li>
+                                                <li>
+                                                    <span>Android Version</span>
+                                                    <span>4.0.3</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li>
+                                    	<div class="label">Location</div>
+                                    	<div class="value">Chennai</div>
+                                    </li>                           
+                                    <li>
+                                        <a class="toggle collapse error" href="javascript:void(0);">LIFE CYCLE</a>
+                                        <ul class="inner">
+                                            <li>
+                                            	<a class="toggle collapse error" href="javascript:void(0);">Mobile signup</a>
+                                                <ul class="inner">
+                                                    <li>
+                                                        <a class="error" href="javascript:void(0);">Proxy server</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="toggle collapse success" href="javascript:void(0);">Auth service</a>
+                                                        <ul class="inner">
+                                                            <li>
+                                                                <a class="error" href="javascript:void(0);">Signup</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="toggle collapse success" href="javascript:void(0);">Create User</a>
+                                                                <ul class="inner">
+                                                                    <li>
+                                                                        <div class="list-items">
+                                                                            <ul>
+                                                                                <li>
+                                                                                    <span>Model</span>
+                                                                                    <span>GT-P5100</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Phone Type</span>
+                                                                                    <span>Tablet</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Brand</span>
+                                                                                    <span>Samsung</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Screen Size</span>
+                                                                                    <span>1280 x 752</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Android Version</span>
+                                                                                    <span>4.0.3</span>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div class="list-items">
+                                                                            <ul>
+                                                                                <li>
+                                                                                    <span>Model</span>
+                                                                                    <span>GT-P5100</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Phone Type</span>
+                                                                                    <span>Tablet</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Brand</span>
+                                                                                    <span>Samsung</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Screen Size</span>
+                                                                                    <span>1280 x 752</span>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <span>Android Version</span>
+                                                                                    <span>4.0.3</span>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                            	</ul>
+                            </li>                            
+                            <li>
+                                <a class="toggle collapse success" href="javascript:void(0);">Paltalk : / products</a>
+                            </li>                            
+                            <li>
+                            	<a class="toggle collapse success" href="javascript:void(0);">Paltalk : / orderplaced</a>
+                            </li>                            
+                            <li>
+                            	<a class="toggle collapse success" href="javascript:void(0);">Paltalk : / signin</a>
+                        	</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end content -->
+</div>
 
-      client.on('connected',    function(){ console.log('connected!') })
-      client.on('disconnected', function(){ console.log('disconnected :(') })
+<script type="text/javascript" src="js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.js"></script>
 
-      client.on('error',        function(error){ console.log('error', error.stack) })
-      client.on('reconnect',    function(){ console.log('reconnect') })
-      client.on('reconnecting', function(){ console.log('reconnecting') })
-      client.on('say',          function(message){ appendMessage(message); })
+<script type="text/javascript" src="/public/javascript/ActionheroWebsocketClient.min.js"></script>
+<script type="text/javascript">
+  var color = Chart.helpers.color;
+  var scatterChartData = {
 
-      client.connect(function(error, details){
-        if (error) {
-          console.error(error);
-        } else {
-          client.action('createChatRoom', {name: 'lifeFeed'}, function(data){
-            client.roomAdd("lifeFeed");
-          });
+    datasets: [
+      {
+        label: 'Failed',
+        backgroundColor: '#F82422',
+        pointBackgroundColor: 'white',
+        borderWidth: 5,
+        pointBorderColor: '#F82422',
+
+        data: []
+      },
+      {
+        label: 'Sucess',
+        backgroundColor: '#39f83b',
+        pointBackgroundColor: 'white',
+        borderWidth: 5,
+        pointBorderColor: '#39f83b',
+
+        data: []
+      },
+      {
+        label: 'Delay',
+        backgroundColor: '#f8e315',
+        pointBackgroundColor: 'white',
+        borderWidth: 5,
+        pointBorderColor: '#f8e315',
+
+        data: []
+      }
+    ]
+  };
+  var chartOptions = {
+      scales: {
+        yAxes: [{
+          type: 'linear',
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Duration'
+          }
+        }],
+        xAxes: [{
+          type: 'time',
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Time'
+          },
+        }],
+        pan: {
+          enabled: true,
+          mode: 'xy'
+        },
+        zoom: {
+          enabled: true,
+          mode: 'xy',
         }
-      });
+      },
+      legend: {
+        display: true
+      },
+      responsive: true,
+      maintainAspectRatio: false
+  };
+
+$(document).ready(function () {
+	$('#sidebarCollapse').on('click', function () {
+		$('#sidebar, #content').toggleClass('active');
+	});
+
+  boot();
+  var ctx = document.getElementById('livefeed').getContext('2d');
+  window.myScatter = Chart.Scatter(ctx, {
+    data: scatterChartData,
+    options: chartOptions
+  });
+
+});
+$('.toggle').click(function(e) {
+  	e.preventDefault();
+  
+    var $this = $(this);
+  
+    if ($this.next().hasClass('show')) {
+        $this.next().removeClass('show');
+        $this.next().slideUp(350);
+		$this.removeClass('expand').addClass('collapse');
+    } else {
+        $this.parent().parent().find('li .inner').removeClass('show');
+        $this.parent().parent().find('li .inner').slideUp(350);		
+        $this.next().toggleClass('show');
+        $this.next().slideToggle(350);
+		$this.removeClass('collapse').addClass('expand');
+    }
+});
+
+  var client;
+  var boot = function(){
+    client = new ActionheroWebsocketClient();
+
+    client.on('connected',    function(){ console.log('connected!') })
+    client.on('disconnected', function(){ console.log('disconnected :(') })
+
+    client.on('error',        function(error){ console.log('error', error.stack) })
+    client.on('reconnect',    function(){ console.log('reconnect') })
+    client.on('reconnecting', function(){ console.log('reconnecting') })
+    client.on('say',          function(message){ appendMessage(message); })
+
+    client.connect(function(error, details){
+      if (error) {
+        console.error(error);
+      } else {
+        client.action('createChatRoom', {name: 'lifeFeed'}, function(data){
+          client.roomAdd("lifeFeed");
+        });
+      }
+    });
 //      client.roomLeave('lifeFeed');
 //      client.disconnect();
 
-    }
+  }
 
-    var jsonArray = [];
+  var statusPass = [];
+  var statusFail = [];
+  var statusSlow = [];
 
-    var appendMessage = function(message){
-      if (message.welcome != null){
-        jsonArray = [];
-      }else{
-        message.json = JSON.parse(message.message)
-        jsonArray.push(message)
+  var appendMessage = function(message){
+
+    var trace = JSON.parse(message.message)
+    console.log(trace);
+
+    if (trace.traceId && trace.status){
+      var status = trace.status;
+
+      switch (status){
+        case 'PASS' :
+          window.myScatter.data.datasets[1].data.push({
+            x: trace.requestTime,
+            y: trace.duration
+          })
+          if(window.myScatter.data.datasets[1].data.length > 50) {
+            window.myScatter.data.datasets[1].data = window.myScatter.data.datasets[1].data.splice(1);
+          }
+          break;
+        case 'FAIL' :
+          window.myScatter.data.datasets[0].data.push({
+            x: trace.requestTime,
+            y: trace.duration
+          })
+          if(window.myScatter.data.datasets[0].data.length > 50) {
+            window.myScatter.data.datasets[0].data = window.myScatter.data.datasets[0].data.splice(1);
+          }
+          break;
+        case 'SLOW':
+          window.myScatter.data.datasets[2].data.push({
+            x: trace.requestTime,
+            y: trace.duration
+          })
+          if(window.myScatter.data.datasets[2].data.length > 50) {
+            window.myScatter.data.datasets[2].data = window.myScatter.data.datasets[2].data.splice(1);
+          }
+          break;
       }
+//      console.log('pass:' + JSON.stringify(statusPass));
+//      console.log('fail:' + JSON.stringify(statusFail));
+//      console.log('slow:' + JSON.stringify(statusSlow));
+      console.log(window.myScatter.data.datasets[0].data);
+      window.myScatter.update();
 
-      if(jsonArray.length > 100) {
-        jsonArray = jsonArray.splice(1);
-      }
-
-      $("#chatBox").JSONView(jsonArray.reverse());
     }
-
-  </script>
-
-</head>
-
-<body onload="boot()">
-
-<div class="container">
-  <div class="row">
-
-    <div class="col-md-12">
-      <h1>Real-Time Chat with Actionhero</h1>
-    </div>
-
-    <div class="col-md-8">
-      <div class="chatBox" id="chatBox"></div>
-    </div>
-
-  </div>
-</div>
+  }
+</script>
 </body>
 </html>
