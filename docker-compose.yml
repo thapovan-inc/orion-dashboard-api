@@ -4,21 +4,22 @@ services:
     image: redis
     ports:
      - "6379:6379"
-#  node:
-#    container_name: 'action-hero'
-#    build: ./
-#    volumes:
-#      - ./:/orion_dashboard_server/
-#    ports:
-#      - "8080:8080"
-#      - "5000:5000"
-#    links:
-#      - redis
-#    environment:
-#      TCP_PORTS: 8080,5000
-#      ENABLE_TCP_SERVER: "true"
-#      KAFKA_HOST: 'localhost:29092'
-#      KAFKA_TOPIC: 'requestStatistics'
-#      REDIS_HOST: redis
-#      REDIS_PORT: 6379
-#      REDIS_DB: 0
+  node:
+    container_name: 'action-hero'
+    build: ./
+    volumes:
+      - ./:/orion_dashboard_server/
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    links:
+      - redis
+    environment:
+      TCP_PORTS: 8080,5000
+      ENABLE_TCP_SERVER: "true"
+      KAFKA_HOST: '54.83.197.74:29092'
+      KAFKA_TOPIC: 'trace-summary-json'
+      ELASTICSEARCH_HOST: 'ec2-54-173-70-121.compute-1.amazonaws.com:9200'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
