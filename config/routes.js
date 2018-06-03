@@ -17,15 +17,14 @@ exports['default'] = {
         { path: '/search/:term/limit/:limit/offset/:offset', action: 'search' }, // (GET) /api/search/car/limit/10/offset/100
       ],
 
-      post: [
-        { path: '/login/:userID(^\\d{3}$)', action: 'login' } // (POST) /api/login/123
-      ],
-
       ---------------------- */
 
+      post: [
+        { path: '/traces', action: 'getTraceByFilter' } // (POST) /api/login/123
+      ],
+
       all: [
-        { path: '/traces/:traceId', action: 'getTraceById', matchTrailingPathParts: true }, // (*) /api/user/123, api/user/123/stuff
-        { path: '/traces/:searchTerm', action: 'getTraceByFilter', matchTrailingPathParts: true }, // (*) /api/user/123, api/user/123/stuff
+        { path: '/traces/:traceId', action: 'getTraceById' }, // (*) /api/user/123, api/user/123/stuff
         { path: '/traces', action: 'getTraces', matchTrailingPathParts: true } // (*) /api/user/123, api/user/123/stuff
       ]
 

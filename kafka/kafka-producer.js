@@ -14,6 +14,7 @@ var apiAggregation = {
   data: [
     {apiName: 'SignUp', passCount: 1000, failCount: 100, slowCount: 50, totalCount: 1150},
     {apiName: 'SignIn', passCount: 2000, failCount: 200, slowCount: 100, totalCount: 2300},
+    {apiName: 'Claim', passCount: 1000, failCount: 1200, slowCount: 100, totalCount: 2300},
     {apiName: 'UserProfile', passCount: 500, failCount: 50, slowCount: 150, totalCount: 700}
   ]
 }
