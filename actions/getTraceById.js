@@ -19,14 +19,33 @@ module.exports = class TraceInfoById extends ActionHero.Action {
     var responseObject = {
       success: false
     }
+    var regex = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+
+    var traceId = data.params.traceId;
+
+    if(traceId == null || traceId == undefined) {
+      responseObject.data = []
+      responseObject.success = false
+      responseObject.message = 'Please enter the trace id'
+      data.response.result = responseObject
+      return
+    }
+    if(!regex.test(traceId)) {
+      responseObject.success = false
+      responseObject.message = 'Invalid trace id'
+      data.response.result = responseObject
+      return
+    }
+
+
     try {
-      var result = await _es.getAllTraceById()
+      var result = await _es.getAllTraceById(traceId)
       responseObject.data = result
       responseObject.success = true
     } catch (err) {
       responseObject.data = []
-      responseObject.success = err
-      responseObject.error = false
+      responseObject.success = false
+      responseObject.error = err
       api.log('err : ', err)
     } finally {
       data.response.result = responseObject
