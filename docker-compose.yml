@@ -15,7 +15,7 @@ services:
     links:
       - redis
     extra_hosts:
-     - "kafka:54.83.197.74.82"
+     - "kafka:54.83.197.74"
     environment:
       TCP_PORTS: 8080,5000
       ENABLE_TCP_SERVER: "true"
