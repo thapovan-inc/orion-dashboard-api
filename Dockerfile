@@ -4,7 +4,7 @@ ADD . orion_dashboard_server/
 
 WORKDIR orion_dashboard_server/
 
-#RUN npm install
+RUN npm install
 
 CMD ["npm", "start"]
 
