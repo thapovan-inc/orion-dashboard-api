@@ -47,7 +47,7 @@
         jsonArray = [];
       }else{
 //        message.json =message
-        jsonArray.push(message)
+        jsonArray.push(JSON.parse(message.message))
       }
 
       if(jsonArray.length > 100) {
