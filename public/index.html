@@ -5,6 +5,7 @@
 <title>Orion - Tracing tool</title>
 <link type="text/css" rel="stylesheet" href="css/Roboto.css" media="all" />
 <link type="text/css" rel="stylesheet" href="css/orion.css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/jquery.jsonview.css" media="all" />
 <link type="text/css" rel="stylesheet" href="css/pages/dashboard.css" media="all" />
 </head>
 
@@ -81,123 +82,21 @@
                         </ul>
                     </div>
                 </section>
+
                 <section class="accordion-section">
                     <ul class="accordion">
-                        <li>
-                            <a :class="['toggle collapse ' + status]" href="javascript:void(0);">{{ serviceName }}</a>
-                            <ul class="inner">
-                                <li>
-                                    <div class="label">Trace ID</div>
-                                    <div class="value"> {{ traceId  }}</div>
-                                </li>
-                                <li>
-                                    <div class="label">Device Info</div>
-                                    <div class="value">
-                                        <ul>
-                                            <li>
-                                                <span>Model</span>
-                                                <span>{{ model }}</span>
-                                            </li>
-                                            <li>
-                                                <span>Phone Type</span>
-                                                <span>{{ phoneType }}</span>
-                                            </li>
-                                            <li>
-                                                <span>Brand</span>
-                                                <span>{{ brand }}</span>
-                                            </li>
-                                            <li>
-                                                <span>Screen Size</span>
-                                                <span>{{ screenSize }}</span>
-                                            </li>
-                                            <li>
-                                                <span>Android Version</span>
-                                                <span>{{androidVersion }}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="label">Location</div>
-                                    <div class="value">{{ location }}</div>
-                                </li>
-                                <li>
-                                    <a class="toggle collapse error" href="javascript:void(0);">LIFE CYCLE</a>
-                                    <ul class="inner">
-                                        <li>
-                                            <a class="toggle collapse error" href="javascript:void(0);">Mobile signup</a>
-                                            <ul class="inner">
-                                                <li>
-                                                    <a class="error" href="javascript:void(0);">Proxy server</a>
-                                                </li>
-                                                <li>
-                                                    <a class="toggle collapse success" href="javascript:void(0);">Auth service</a>
-                                                    <ul class="inner">
-                                                        <li>
-                                                            <a class="error" href="javascript:void(0);">Signup</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="toggle collapse success" href="javascript:void(0);">Create User</a>
-                                                            <ul class="inner">
-                                                                <li>
-                                                                    <div class="list-items">
-                                                                        <ul>
-                                                                            <li>
-                                                                                <span>Model</span>
-                                                                                <span>GT-P5100</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Phone Type</span>
-                                                                                <span>Tablet</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Brand</span>
-                                                                                <span>Samsung</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Screen Size</span>
-                                                                                <span>1280 x 752</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Android Version</span>
-                                                                                <span>4.0.3</span>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                    <div class="list-items">
-                                                                        <ul>
-                                                                            <li>
-                                                                                <span>Model</span>
-                                                                                <span>GT-P5100</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Phone Type</span>
-                                                                                <span>Tablet</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Brand</span>
-                                                                                <span>Samsung</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Screen Size</span>
-                                                                                <span>1280 x 752</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span>Android Version</span>
-                                                                                <span>4.0.3</span>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                        <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
+                            <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)">{{ value.serviceName }}</a>
+                            <div :id='key' class="json-data">
+
+                            </div>
+                            <!--<ul class="inner">-->
+
+                                <!--<li>-->
+                                    <!--<div class="label">Span ID</div>-->
+                                    <!--<div class="value"> {{ value.spanId  }}</div>-->
+                                <!--</li>-->
+                            <!--</ul>-->
                         </li>
                     </ul>
                 </section>
@@ -212,6 +111,7 @@
 
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+<script type="text/javascript" src="/public/javascript/jquery.jsonview.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script type="text/javascript" src="/public/javascript/ActionheroWebsocketClient.min.js"></script>
@@ -228,17 +128,18 @@
         screenSize: null,
         androidVersion: null,
         location: null,
-      status:'hide',
+      status:'success',
       myScatter: null,
       accodion: {data:[]},
       trace: '',
       device: '',
-      serviceName: '',
       keyword:'',
       service: '',
       api: {},
       isKeywordError: '',
       isKeywordLoading: false,
+      requestInfo: {},
+      jsonView: {}
     },
     methods:{
       getAccordionDetails: function (event) {
@@ -246,43 +147,52 @@
         var firstPoint = activePoints[0];
         value = this.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
 //        console.log(JSON.stringify(value));
+        this.traceId=value.traceId;
+        this.serviceName=value.serviceName;
         var self = this;
         axios.get('/api', {
           params: {
             action: 'getTraceById',
-           // traceId: value.traceId
-            traceId: '0ed7e7db-99a4-47f0-88c1-50d9f5536628'
+            traceId: value.traceId
           }
         })
           .then(function (response) {
+            console.log('responce=' + JSON.stringify(response));
+            var temptraceId = this.traceId;
+            var life_cycle_json = response.data.result.data.life_cycle_json.spanMap;
+            console.log('lifecycle=' + JSON.stringify(life_cycle_json));
 //            self.deviceInfo=response.data.result.data;
 //            self.lifeCycle=response.data.result.data.lifeCycle;
-            self.serviceName= response.data.result.data[0].lifeCycle[0].serviceName;
+            self.requestInfo= life_cycle_json;
            // console.log(" responce= " + JSON.stringify(response.data.result));
-            self.traceId= response.data.result.data[0].traceId;
-            var requestStatus = response.data.result.data[0].status;
-            if(requestStatus == 'FAIL')
-            {
-              self.status = 'error';
-            }
-            else if( requestStatus == 'PASS'){
-              self.status = 'success';
-            }
-            else {
-              self.status = 'success';
-            }
-            self.model=response.data.result.data[0].deviceInfo.model;
-            self.phoneType= response.data.result.data[0].deviceInfo.phoneType;
-            self.brand= response.data.result.data[0].deviceInfo.brand;
-            self.screenSize= response.data.result.data[0].deviceInfo.screenSize;
-            self.androidVersion= response.data.result.data[0].deviceInfo.androidversion;
-            self.location= response.data.result.data[0].location;
+//            var requestStatus = response.data.result.data[0].status;
+//            if(requestStatus == 'FAIL')
+//            {
+//              self.status = 'error';
+//            }
+//            else if( requestStatus == 'PASS'){
+//              self.status = 'success';
+//            }
+//            else {
+//              self.status = 'success';
+//            }
+//            self.model=response.data.result.data[0].deviceInfo.model;
+//            self.phoneType= response.data.result.data[0].deviceInfo.phoneType;
+//            self.brand= response.data.result.data[0].deviceInfo.brand;
+//            self.screenSize= response.data.result.data[0].deviceInfo.screenSize;
+//            self.androidVersion= response.data.result.data[0].deviceInfo.androidversion;
+//            self.location= response.data.result.data[0].location;
 //            console.log(response.data.result);
 //            console.log(" responce= " + JSON.stringify(response));
           })
           .catch(function (error) {
             console.log(error);
           });
+      },
+      jsonPass(value){
+
+        $("#"+value.spanId).JSONView(value);
+
       },
       getPass(service){
 
@@ -478,6 +388,12 @@
         xAxes: [{
           type: 'time',
           display: true,
+          time: {
+            unit: 'minute',
+            displayFormats: {
+              'minute': 'hh:mm a'
+            }
+          },
           scaleLabel: {
             display: true,
             labelString: 'Time'
@@ -492,6 +408,19 @@
           mode: 'xy',
         }
       },
+//    tooltips: {
+//      callbacks: {
+//        title: function(items, data) { data.datasets[items[0].datasetIndex].data[items[0].index].traceId },
+//      label: function(item, data) { data.datasets[item.datasetIndex].data[item.index].duration },
+//    cornerRadius: 0,
+//    caretSize: 0,
+//    xPadding: 16,
+//    yPadding: 10,
+//    backgroundColor: 'rgba(0, 150, 100, 0.9)',
+//    titleFontStyle: 'normal',
+//    titleMarginBottom: 15
+//  }
+//  },
       legend: {
         display: true
       },
@@ -598,7 +527,8 @@ $('.toggle').click(function(e) {
             app.myScatter.data.datasets[1].data.push({
               x: trace.requestTime,
               y: trace.duration,
-              traceId: trace.traceId
+              traceId: trace.traceId,
+              serviceName: trace.serviceName
             })
             if (app.myScatter.data.datasets[1].data.length > 50) {
               app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
@@ -608,7 +538,8 @@ $('.toggle').click(function(e) {
             app.myScatter.data.datasets[0].data.push({
               x: trace.requestTime,
               y: trace.duration,
-              traceId: trace.traceId
+              traceId: trace.traceId,
+              serviceName: trace.serviceName
             })
             if (app.myScatter.data.datasets[0].data.length > 50) {
               app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
@@ -618,7 +549,8 @@ $('.toggle').click(function(e) {
             app.myScatter.data.datasets[2].data.push({
               x: trace.requestTime,
               y: trace.duration,
-              traceId: trace.traceId
+              traceId: trace.traceId,
+              serviceName: trace.serviceName
             })
             if (app.myScatter.data.datasets[2].data.length > 50) {
               app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
