@@ -164,6 +164,9 @@
 //            self.deviceInfo=response.data.result.data;
 //            self.lifeCycle=response.data.result.data.lifeCycle;
             self.requestInfo= life_cycle_json;
+            this.$nextTick(function () {
+              console.log(this.$el.textContent) // => 'updated'
+            })
            // console.log(" responce= " + JSON.stringify(response.data.result));
 //            var requestStatus = response.data.result.data[0].status;
 //            if(requestStatus == 'FAIL')
@@ -350,7 +353,7 @@
         label: 'Failed',
         backgroundColor: '#F82422',
         pointBackgroundColor: 'white',
-        borderWidth: 5,
+        borderWidth: 10,
         pointBorderColor: '#F82422',
 
         data: []
@@ -359,7 +362,7 @@
         label: 'Sucess',
         backgroundColor: '#39f83b',
         pointBackgroundColor: 'white',
-        borderWidth: 5,
+        borderWidth: 10,
         pointBorderColor: '#39f83b',
 
         data: []
@@ -368,7 +371,7 @@
         label: 'Delay',
         backgroundColor: '#f8e315',
         pointBackgroundColor: 'white',
-        borderWidth: 5,
+        borderWidth: 10,
         pointBorderColor: '#f8e315',
 
         data: []
@@ -382,7 +385,7 @@
           display: true,
           scaleLabel: {
             display: true,
-            labelString: 'Duration'
+            labelString: 'Request Duration(ms)'
           }
         }],
         xAxes: [{
@@ -396,7 +399,7 @@
           },
           scaleLabel: {
             display: true,
-            labelString: 'Time'
+            labelString: 'Request initiation Time'
           },
         }],
         pan: {
