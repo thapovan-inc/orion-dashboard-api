@@ -85,9 +85,11 @@
 
                 <section class="accordion-section">
                     <ul class="accordion">
+                        <a > Trace Name: {{ traceName }} </a>
+                        <a> Trace Id : {{ traceId }} </a>
                         <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
                             <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)">{{ value.serviceName }}</a>
-                            <div :id='key' class="json-data">
+                            <div :id="value.spanId" class="json-data">
 
                             </div>
                             <!--<ul class="inner">-->
@@ -122,6 +124,7 @@
     data: {
         serviceName: null,
         traceId: null,
+        traceName: null,
         model: null,
         phoneType: null,
         brand: null,
@@ -148,25 +151,32 @@
         value = this.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
 //        console.log(JSON.stringify(value));
         this.traceId=value.traceId;
-        this.serviceName=value.serviceName;
+        this.traceName=value.traceName;
         var self = this;
         axios.get('/api', {
           params: {
             action: 'getTraceById',
-            traceId: value.traceId
+            traceId: this.traceId
           }
         })
           .then(function (response) {
-            console.log('responce=' + JSON.stringify(response));
+            //console.log('responce=' + JSON.stringify(response));
             var temptraceId = this.traceId;
-            var life_cycle_json = response.data.result.data.life_cycle_json.spanMap;
-            console.log('lifecycle=' + JSON.stringify(life_cycle_json));
+            var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
+           // console.log('lifecycle=' + JSON.stringify(life_cycle_json));
+//            for (var key in life_cycle_json) {
+//              if (life_cycle_json.hasOwnProperty(key)) {
+//                var val = life_cycle_json[key];
+//                delete key.children;
+//                delete key.events;
+//              }
+//            }
 //            self.deviceInfo=response.data.result.data;
 //            self.lifeCycle=response.data.result.data.lifeCycle;
             self.requestInfo= life_cycle_json;
-            this.$nextTick(function () {
-              console.log(this.$el.textContent) // => 'updated'
-            })
+//            this.$nextTick(function () {
+//              console.log(this.$el.textContent) // => 'updated'
+//            })
            // console.log(" responce= " + JSON.stringify(response.data.result));
 //            var requestStatus = response.data.result.data[0].status;
 //            if(requestStatus == 'FAIL')
@@ -192,9 +202,9 @@
             console.log(error);
           });
       },
-      jsonPass(value){
-
-        $("#"+value.spanId).JSONView(value);
+          jsonPass(value){
+        console.log(value.spanId)
+        $("#"+value.spanId).JSONView(JSON.stringify(value));
 
       },
       getPass(service){
@@ -385,7 +395,7 @@
           display: true,
           scaleLabel: {
             display: true,
-            labelString: 'Request Duration(ms)'
+            labelString: 'Request Duration (ms)'
           }
         }],
         xAxes: [{
@@ -531,7 +541,7 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              serviceName: trace.serviceName
+              traceName: trace.traceName
             })
             if (app.myScatter.data.datasets[1].data.length > 50) {
               app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
@@ -542,7 +552,7 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              serviceName: trace.serviceName
+              traceName: trace.traceName
             })
             if (app.myScatter.data.datasets[0].data.length > 50) {
               app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
@@ -553,7 +563,7 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              serviceName: trace.serviceName
+              traceName: trace.traceName
             })
             if (app.myScatter.data.datasets[2].data.length > 50) {
               app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
