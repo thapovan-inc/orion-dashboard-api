@@ -40,11 +40,16 @@ module.exports = class TraceInfoById extends ActionHero.Action {
 
     try {
       var result = await _es.getAllTraceById(traceId)
-      api.log('result : ', result)
       var respJson = {
         traceId: traceId,
         life_cycle_json: JSON.parse(result[0].life_cycle_json)
       }
+      var arraySpanList = respJson.life_cycle_json.spanList;
+      for(let i=0; i<arraySpanList.length; i++) {
+        arraySpanList[i].startTime = new Date(arraySpanList[i].startTime/1000);
+        arraySpanList[i].endTime = new Date(arraySpanList[i].endTime/1000);
+      }
+
       responseObject.data = respJson
       responseObject.success = true
     } catch (err) {
