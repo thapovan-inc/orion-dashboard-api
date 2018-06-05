@@ -85,11 +85,13 @@
 
                 <section class="accordion-section">
                     <ul class="accordion">
-                        <a > Trace Name: {{ traceName }} </a>
-                        <a> Trace Id : {{ traceId }} </a>
-                        <a> Start Time : {{ startTime }} </a>
-                        <a> End Time : {{ endTime }} </a>
-                        <a> Duration : {{ duration }} </a>
+                        <pre>
+                        <b> Trace Name:   {{ traceName }} </b>
+                        <b> Trace Id :   {{ traceId }} </b>
+                        <b> Start Time :   {{ startTime }} </b>
+                        <b> End Time :   {{ endTime }} </b>
+                        <b> Duration :   {{ duration }} </b>
+                        </pre>
                         <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
                             <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)">{{ value.serviceName }}    Duration:{{ value.duration}}</a>
                             <div :id="value.spanId" class="json-data">
