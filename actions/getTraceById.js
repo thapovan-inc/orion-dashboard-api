@@ -37,7 +37,6 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       return
     }
 
-
     try {
       var result = await _es.getAllTraceById(traceId)
       var respJson = {
@@ -46,6 +45,10 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       }
       var arraySpanList = respJson.life_cycle_json.spanList;
       for(let i=0; i<arraySpanList.length; i++) {
+        var timeDifferrence = (arraySpanList[i].endTime - arraySpanList[i].startTime);
+        var duration = timeDifferrence / 1000;
+        arraySpanList[i]['duration'] = duration;
+
         arraySpanList[i].startTime = new Date(arraySpanList[i].startTime/1000);
         arraySpanList[i].endTime = new Date(arraySpanList[i].endTime/1000);
       }
