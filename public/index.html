@@ -87,6 +87,9 @@
                     <ul class="accordion">
                         <a > Trace Name: {{ traceName }} </a>
                         <a> Trace Id : {{ traceId }} </a>
+                        <a> Start Time : {{ startTime }} </a>
+                        <a> End Time : {{ endTime }} </a>
+                        <a> Duration : {{ duration }} </a>
                         <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
                             <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)">{{ value.serviceName }}</a>
                             <div :id="value.spanId" class="json-data">
@@ -142,7 +145,10 @@
       isKeywordError: '',
       isKeywordLoading: false,
       requestInfo: {},
-      jsonView: {}
+      jsonView: {},
+      startTime: '',
+      endTime: '',
+      duration: ''
     },
     methods:{
       getAccordionDetails: function (event) {
@@ -152,6 +158,9 @@
 //        console.log(JSON.stringify(value));
         this.traceId=value.traceId;
         this.traceName=value.traceName;
+        this.duration=value.duration;
+        this.startTime=value.startTime;
+        this.endTime=value.endTime;
         var self = this;
         axios.get('/api', {
           params: {
@@ -526,7 +535,7 @@ $('.toggle').click(function(e) {
   var appendMessage = function(message) {
 
     var trace = JSON.parse(message.message)
-    console.log(trace);
+    console.log(JSON.stringify(trace));
 
     var type = trace.type;
 
@@ -541,7 +550,10 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              traceName: trace.traceName
+              traceName: trace.traceName,
+              startTime: new Date(trace.startTime),
+              endTime: new Date(trace.endTime),
+              duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[1].data.length > 50) {
               app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
@@ -552,7 +564,10 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              traceName: trace.traceName
+              traceName: trace.traceName,
+              startTime: new Date(trace.startTime),
+              endTime: new Date(trace.endTime),
+              duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[0].data.length > 50) {
               app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
@@ -563,7 +578,10 @@ $('.toggle').click(function(e) {
               x: trace.requestTime,
               y: trace.duration,
               traceId: trace.traceId,
-              traceName: trace.traceName
+              traceName: trace.traceName,
+              startTime: new Date(trace.startTime),
+              endTime: new Date(trace.endTime),
+              duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[2].data.length > 50) {
               app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
