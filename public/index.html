@@ -190,6 +190,7 @@
       methods: {
         getAccordionDetails: function (event) {
           $("#trace-details").hide();
+          $(".accordion").hide();
           var activePoints = this.myScatter.getElementsAtEvent(event);
           var firstPoint = activePoints[0];
           if(firstPoint !== undefined) {
@@ -204,7 +205,7 @@
           axios.get('/api', {
               params: {
                 action: 'getTraceById',
-                traceId: '51d9cdcb-8055-4d50-95cd-e9ea870a7f1e' //this.traceId //pass static id here
+                traceId: this.traceId //pass static id here
               }
             })
             .then(function (response) {
@@ -212,6 +213,7 @@
               var temptraceId = this.traceId;
               var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
               $("#trace-details").show();
+              $(".accordion").show();
               // console.log('lifecycle=' + JSON.stringify(life_cycle_json));
               //            for (var key in life_cycle_json) {
               //              if (life_cycle_json.hasOwnProperty(key)) {
