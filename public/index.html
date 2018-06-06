@@ -410,17 +410,21 @@
       datasets: [{
           label: 'Failed',
           backgroundColor: '#F82422',
-          pointBackgroundColor: 'white',
-          borderWidth: 10,
+          pointBackgroundColor: '#F82422',
+          borderWidth: 1,
+          pointRadius: 10,
+          pointHoverRadius: 10,
           pointBorderColor: '#F82422',
 
           data: []
         },
         {
-          label: 'Sucess',
+          label: 'Success',
           backgroundColor: '#39f83b',
-          pointBackgroundColor: 'white',
-          borderWidth: 10,
+          pointBackgroundColor: '#39f83b',
+          borderWidth: 1,
+          pointRadius: 10,
+          pointHoverRadius: 10,
           pointBorderColor: '#39f83b',
 
           data: []
@@ -428,8 +432,10 @@
         {
           label: 'Delay',
           backgroundColor: '#f8e315',
-          pointBackgroundColor: 'white',
-          borderWidth: 10,
+          pointBackgroundColor: '#f8e315',
+          borderWidth: 1,
+          pointRadius: 10,
+          pointHoverRadius: 10,
           pointBorderColor: '#f8e315',
 
           data: []
@@ -447,7 +453,11 @@
           scaleLabel: {
             display: true,
             labelString: 'Request Duration (ms)'
-          }
+          },
+          gridLines: {
+            color: '#fff',
+            zeroLineColor: '#fff'
+          },
         }],
         xAxes: [{
           type: 'time',
@@ -461,6 +471,11 @@
           scaleLabel: {
             display: true,
             labelString: 'Request initiation Time'
+          },
+          gridLines: {
+            color: 'rgba(0,0,0,0)',
+            lineWidth: 0,
+            zeroLineColor: '#fff'
           },
         }],
         pan: {
@@ -489,7 +504,7 @@
         display: true
       },
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
     };
 
     $(document).ready(function () {
@@ -503,6 +518,9 @@
         data: scatterChartData,
         options: chartOptions
       });
+
+      Chart.defaults.global.defaultFontColor = 'white';
+      Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 1)';
 
       //  document.getElementById("livefeed").onclick = function(evt){
       //    var activePoints = window.myScatter.getElementsAtEvent(evt);
