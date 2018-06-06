@@ -26,6 +26,8 @@ producer.on('ready', function () {
     var requestStatistics = {
       traceId: uuidv4(),
       requestTime: Date.now(),
+      startTime: Date.now(),
+      endTime: Date.now(),
       duration: durations[getValue(durations)],
       status: status[getValue(status)],
       email: 'test'+index+'.gmail.com',
@@ -38,7 +40,7 @@ producer.on('ready', function () {
 
     var requestStatisticsBuffer = Buffer.from(JSON.stringify(requestStatistics))
     var payloads = [
-      {topic: 'requestStatistics', messages: requestStatisticsBuffer},
+      {topic: 'trace-summary-json', messages: requestStatisticsBuffer},
       {topic: 'apiAggregation', messages: apiAggregationBuffer}
     ]
 

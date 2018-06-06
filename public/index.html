@@ -119,9 +119,8 @@
           <section>
             <div class="accordion">
               <div class="accordion-panel" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
-                <a :class="['accordion-title toggle collapse ' + value.status]" :id="['span_'+ key]" href="javascript:void(0);" @click="jsonPass(key,value)">
-                    {{ value.serviceName }}                 
-                    <span>Duration:{{ value.duration}} ms</span>                   
+                <a :class="['accordion-title toggle collapse ' + value.labelStatus]" :id="['span_'+ key]" href="javascript:void(0);" @click="jsonPass(key,value)">
+                    {{ value.serviceName }}
                 </a>
                 <div class="accordion-content" :id="value.spanId">
                 </div>
@@ -209,7 +208,7 @@
               }
             })
             .then(function (response) {
-              //console.log('responce=' + JSON.stringify(response));
+              console.log('ES responce = ' + JSON.stringify(response));
               var temptraceId = this.traceId;
               var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
               $("#trace-details").show();
@@ -618,7 +617,7 @@
     var appendMessage = function (message) {
 
       var trace = JSON.parse(message.message)
-      //console.log(JSON.stringify(trace));
+      console.log(JSON.stringify(trace));
 
       var type = trace.type;
 
@@ -634,8 +633,8 @@
                 y: trace.duration,
                 traceId: trace.traceId,
                 traceName: trace.traceName,
-                startTime: new Date(trace.startTime),
-                endTime: new Date(trace.endTime),
+                startTime: trace.startTime,
+                endTime: trace.endTime,
                 duration: trace.duration
               })
               if (app.myScatter.data.datasets[1].data.length > 50) {
@@ -648,8 +647,8 @@
                 y: trace.duration,
                 traceId: trace.traceId,
                 traceName: trace.traceName,
-                startTime: new Date(trace.startTime),
-                endTime: new Date(trace.endTime),
+                startTime: trace.startTime,
+                endTime: trace.endTime,
                 duration: trace.duration
               })
               if (app.myScatter.data.datasets[0].data.length > 50) {
@@ -662,8 +661,8 @@
                 y: trace.duration,
                 traceId: trace.traceId,
                 traceName: trace.traceName,
-                startTime: new Date(trace.startTime),
-                endTime: new Date(trace.endTime),
+                startTime: trace.startTime,
+                endTime: trace.endTime,
                 duration: trace.duration
               })
               if (app.myScatter.data.datasets[2].data.length > 50) {

@@ -9,6 +9,8 @@
   "dependencies": {
     "actionhero": "19.0.1",
     "actionhero-node-client": "6.0.0",
+    "change-case": "3.0.2",
+    "dateformat": "3.0.3",
     "elasticsearch": "15.0.0",
     "ioredis": "latest",
     "kafka-node": "2.6.1",
