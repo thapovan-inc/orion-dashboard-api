@@ -84,16 +84,14 @@
                 </section>
 
                 <section class="accordion-section">
-                    <ul class="accordion">
-                        <pre>
+                    <ul class="accordion"><pre>
                         <b> Trace Name:   {{ traceName }} </b>
                         <b> Trace Id :   {{ traceId }} </b>
                         <b> Start Time :   {{ startTime }} </b>
                         <b> End Time :   {{ endTime }} </b>
-                        <b> Duration :   {{ duration }} </b>
-                        </pre>
+                        <b> Duration :   {{ duration }} </b></pre>
                         <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
-                            <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)">{{ value.serviceName }}    Duration:{{ value.duration}}</a>
+                            <a :class="['span toggle collapse ' + value.status]" href="javascript:void(0);" @click="jsonPass(value)"><pre>{{ value.serviceName }}                 Duration:{{ value.duration}}</pre></a>
                             <div :id="value.spanId" class="json-data">
 
                             </div>
@@ -553,8 +551,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[1].data.length > 50) {
@@ -567,8 +565,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[0].data.length > 50) {
@@ -581,8 +579,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[2].data.length > 50) {
