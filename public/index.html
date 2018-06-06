@@ -208,7 +208,7 @@
               }
             })
             .then(function (response) {
-              //console.log('responce=' + JSON.stringify(response));
+              console.log('ES responce = ' + JSON.stringify(response));
               var temptraceId = this.traceId;
               var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
               $("#trace-details").show();
