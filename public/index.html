@@ -551,8 +551,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[1].data.length > 50) {
@@ -565,8 +565,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[0].data.length > 50) {
@@ -579,8 +579,8 @@ $('.toggle').click(function(e) {
               y: trace.duration,
               traceId: trace.traceId,
               traceName: trace.traceName,
-              startTime: new Date(trace.startTime),
-              endTime: new Date(trace.endTime),
+              startTime: trace.startTime,
+              endTime: trace.endTime,
               duration: trace.duration +" ms"
             })
             if (app.myScatter.data.datasets[2].data.length > 50) {
