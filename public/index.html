@@ -70,7 +70,7 @@
 
         <div class="main-wrapper">
           <section id="charts">
-            <canvas id="livefeed" style="height:400px !important;" v-on:click="getAccordionDetails">
+            <canvas id="livefeed" style="height:500px !important;" v-on:click="getAccordionDetails">
 
             </canvas>
           </section>
@@ -416,6 +416,7 @@
           pointHoverRadius: 10,
           pointBorderColor: '#F82422',
 
+
           data: []
         },
         {
@@ -455,27 +456,30 @@
             labelString: 'Request Duration (ms)'
           },
           gridLines: {
-            color: '#fff',
-            zeroLineColor: '#fff'
+            color: "rgba(255,255,255,0.3)",
+            lineWidth:0.1,
+            zeroLineColor :"#fff",
+            zeroLineWidth :.1
           },
         }],
         xAxes: [{
           type: 'time',
           display: true,
-          time: {
-            unit: 'minute',
-            displayFormats: {
-              'minute': 'hh:mm a'
-            }
-          },
+//          time: {
+//            unit: 'minute',
+//            displayFormats: {
+//              'minute': 'hh:mm a'
+//            }
+//          },
           scaleLabel: {
             display: true,
             labelString: 'Request initiation Time'
           },
           gridLines: {
-            color: 'rgba(0,0,0,0)',
-            lineWidth: 0,
-            zeroLineColor: '#fff'
+            color: "rgba(255,255,255,0.3)",
+            lineWidth:0.1,
+            zeroLineColor:"#fff",
+            zeroLineWidth:.1
           },
         }],
         pan: {
@@ -505,6 +509,11 @@
       },
       responsive: true,
       maintainAspectRatio: false,
+      legend: {
+        padding: {
+          top: 100
+        }
+      }
     };
 
     $(document).ready(function () {
