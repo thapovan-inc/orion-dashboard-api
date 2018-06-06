@@ -60,14 +60,14 @@ module.exports = class TraceInfoById extends ActionHero.Action {
 
         if(arraySpanList[i].logSummary.ERROR != 0 || arraySpanList[i].logSummary.CRITICAL != 0) {
           status = 'FAIL'
-          labelStatus = 'success'
+          labelStatus = 'error'
         } else {
           if(duration > 4000) {
             status = 'SLOW'
             labelStatus = 'warning'
           } else {
             status = 'PASS'
-            labelStatus = 'error'
+            labelStatus = 'success'
           }
         }
         arraySpanList[i]['status'] = status;
