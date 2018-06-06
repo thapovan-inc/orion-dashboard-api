@@ -45,6 +45,7 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         traceId: traceId,
         life_cycle_json: JSON.parse(result[0].life_cycle_json)
       }
+      api.log('API resp : ', respJson.life_cycle_json);
       respJson.life_cycle_json['traceName'] = changeCase.titleCase(respJson.life_cycle_json['traceName']);
 
       var arraySpanList = respJson.life_cycle_json.spanList;
