@@ -52,7 +52,7 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       for(let i=0; i<arraySpanList.length; i++) {
         var timeDifferrence = (arraySpanList[i].endTime - arraySpanList[i].startTime);
         var duration = timeDifferrence / 1000;
-        arraySpanList[i]['duration'] = duration;
+        arraySpanList[i]['duration'] = duration +" ms";
         arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
 
         var status = ''
@@ -75,6 +75,8 @@ module.exports = class TraceInfoById extends ActionHero.Action {
 
         delete arraySpanList[i].logSummary;
         delete arraySpanList[i].children;
+        delete arraySpanList[i].traceId;
+        delete arraySpanList[i].traceName;
 
         if(arraySpanList[i].startTime>0) {
           arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm');
