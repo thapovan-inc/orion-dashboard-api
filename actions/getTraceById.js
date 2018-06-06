@@ -1,6 +1,8 @@
 const ActionHero = require('actionhero')
 const es = require('../lib/elasticsearch')
 var _es = new es()
+var dateFormat = require('dateformat')
+var changeCase = require('change-case')
 
 module.exports = class TraceInfoById extends ActionHero.Action {
   constructor () {
@@ -43,12 +45,15 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         traceId: traceId,
         life_cycle_json: JSON.parse(result[0].life_cycle_json)
       }
+      respJson.life_cycle_json['traceName'] = changeCase.titleCase(respJson.life_cycle_json['traceName']);
+
       var arraySpanList = respJson.life_cycle_json.spanList;
 
       for(let i=0; i<arraySpanList.length; i++) {
         var timeDifferrence = (arraySpanList[i].endTime - arraySpanList[i].startTime);
         var duration = timeDifferrence / 1000;
         arraySpanList[i]['duration'] = duration;
+        arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
 
         var status = ''
 
@@ -67,8 +72,12 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         delete arraySpanList[i].logSummary;
         delete arraySpanList[i].children;
 
-        arraySpanList[i].startTime = new Date(arraySpanList[i].startTime/1000);
-        arraySpanList[i].endTime = new Date(arraySpanList[i].endTime/1000);
+        if(arraySpanList[i].startTime>0) {
+          arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        }
+        if(arraySpanList[i].endTime>0) {
+          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        }
 
         var events = arraySpanList[i].events;
 
