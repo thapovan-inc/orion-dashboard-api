@@ -52,7 +52,7 @@ module.exports = class TraceInfoById extends ActionHero.Action {
 
       for(let i=0; i<arraySpanList.length; i++) {
         var timeDifferrence = (arraySpanList[i].endTime - arraySpanList[i].startTime);
-        var duration = timeDifferrence / 1000;
+        var duration = Math.round(timeDifferrence / 1000);
         arraySpanList[i]['duration'] = duration +" ms";
         arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
 
