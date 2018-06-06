@@ -91,7 +91,7 @@
                         <b> End Time :   {{ endTime }} </b>
                         <b> Duration :   {{ duration }} </b></pre>
                         <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
-                            <a :class="['span toggle collapse ' + status]" href="javascript:void(0);" @click="jsonPass(value)"><pre>{{ value.serviceName }}                 Duration:{{ value.duration}}</pre></a>
+                            <a :class="['span toggle collapse ' + value.status]" href="javascript:void(0);" @click="jsonPass(value)"><pre>{{ value.serviceName }}                 Duration:{{ value.duration}}</pre></a>
                             <div :id="value.spanId" class="json-data">
 
                             </div>
