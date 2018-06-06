@@ -56,18 +56,22 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
 
         var status = ''
+        var labelStatus = ''
 
         if(arraySpanList[i].logSummary.ERROR != 0 || arraySpanList[i].logSummary.CRITICAL != 0) {
           status = 'FAIL'
+          labelStatus = 'success'
         } else {
           if(duration > 4000) {
             status = 'SLOW'
+            labelStatus = 'warning'
           } else {
             status = 'PASS'
+            labelStatus = 'error'
           }
         }
-
         arraySpanList[i]['status'] = status;
+        arraySpanList[i]['labelStatus'] = labelStatus;
 
         delete arraySpanList[i].logSummary;
         delete arraySpanList[i].children;
