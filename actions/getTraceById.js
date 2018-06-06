@@ -49,6 +49,19 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         var duration = timeDifferrence / 1000;
         arraySpanList[i]['duration'] = duration;
 
+        var status = ''
+
+        if(arraySpanList[i].logSummary.ERROR != 0 || trace.logSummary.CRITICAL != 0) {
+          status = 'FAIL'
+        } else {
+          if(duration > 4000) {
+            status = 'SLOW'
+          } else {
+            status = 'PASS'
+          }
+        }
+
+        arraySpanList[i]['status'] = status;
         arraySpanList[i].startTime = new Date(arraySpanList[i].startTime/1000);
         arraySpanList[i].endTime = new Date(arraySpanList[i].endTime/1000);
       }
