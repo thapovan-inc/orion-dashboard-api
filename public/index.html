@@ -613,7 +613,8 @@
                 'Content-Type': 'application/json'
             }
 
-//            this.showLoader();
+            this.showLoader();
+            var self = this;
 
             axios.post('/api/traces', filterObj, header).then(function(response){
                 app.liveData = false;
@@ -624,7 +625,7 @@
                     app.loadDashboardDataBySearch(resp[i]);
                 }
                 app.myScatter.stop();
-//                this.hideLoader();
+              self.hideLoader();
             })
           } else {
             console.log("Search filter values are empty!!!");
@@ -670,7 +671,11 @@
           $("#date-time").val('');
         },
         resetFilter() {
-            app.myScatter.clear();
+            //app.myScatter.clear();
+            $("#date-time").val('');
+            $("#ip").val('');
+            $(".logStatus").prop('checked',false);
+            app.myScatter.update();
             app.liveData= true;
             app.myScatter.reset();
         }
