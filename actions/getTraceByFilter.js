@@ -9,8 +9,8 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
     this.description = 'Will return information on trace by search term'
     this.inputs = {
       traceId: { required: false },
-      fromTime: { required: false },
-      toTime: { required: false },
+      startTime: { required: false },
+      endTime: { required: false },
       duration: { required: false },
       status: { required: false },
       email: { required: false },
@@ -24,13 +24,13 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
   async run (data) {
     const api = ActionHero.api
     // var today = new Date();
-    // var fromTime = today.setDate(today.getDate() - 1)
-    // var toTime = (new Date()).getTime()
+    // var startTime = today.setDate(today.getDate() - 1)
+    // var endTime = (new Date()).getTime()
     // return
     //
     var traceId = (data.params.traceId == undefined) ? '' : data.params.traceId;
-    // var fromTime = isNaN(data.params.fromTime) ? fromTime : (data.params.fromTime).getTime();
-    // var toTime = isNaN(data.params.toTime) ? toTime : (data.params.toTime).getTime();
+    // var startTime = isNaN(data.params.startTime) ? startTime : (data.params.startTime).getTime();
+    // var endTime = isNaN(data.params.endTime) ? endTime : (data.params.endTime).getTime();
     var duration = isNaN(data.params.duration) ? '' : data.params.duration;
     var status = (data.params.status == undefined) ? '' : data.params.status;
     var email = (data.params.email == undefined) ? '' : data.params.email;
@@ -40,8 +40,8 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
     var ip = (data.params.ip == undefined) ? '' : data.params.ip;
 
     var requestObj = {
-      // fromTime: fromTime,
-      // toTime: toTime,
+      // startTime: startTime,
+      // endTime: endTime,
     }
     var responseObject = {
       success: false
