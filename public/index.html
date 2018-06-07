@@ -3,7 +3,9 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
   <title>Orion - Tracing tool</title>
+  <link rel="icon" type="image/vnd.microsoft.icon" href="images/favicon.png" />
   <link type="text/css" rel="stylesheet" href="css/Roboto.css" media="all" />
   <link type="text/css" rel="stylesheet" href="css/orion.css" media="all" />
   <link type="text/css" rel="stylesheet" href="css/daterangepicker.css" media="all" />
@@ -15,16 +17,14 @@
     <header>
       <div class="left-col">
         <div class="logo">
-          <div class="orion-logo">Orion
-            <span>Tracing tool</span>
-          </div>
+            <div class="orion-logo"></div>
         </div>
       </div>
       <div class="right-col">
         <div class="user-details">
           <div class="user-info">
             <p>Welcome Vaidy!</p>
-            <p>Monday, 10th May</p>
+            <p>Jun 8 Friday</p>
           </div>
           <div class="thumb">
             <img src="images/avatar.png" alt="Vaidy" />
@@ -48,7 +48,8 @@
               <i class="icon-dashboard"></i> Dashboard</h2>
           </div>
           <div class="search-filters">
-            <div class="label">Filter By</div>
+              <div class="search-options">
+              <div class="label">Filter By</div>
             <div class="checkbox">
               <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
               <label for="passed">Passed</label>
@@ -61,16 +62,19 @@
               <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
               <label for="failed">Failed</label>
             </div>
+              </div>
             <div class="form-group">
               <!-- <input type="text" name="location" value="Location" /> -->
               <input type="text" name="ip" id="ip" />
-              <input type="text" id="date-time" name="datetimes" />
-              <span id="resetDate" @click="resetDate()">removeDate</span>
+                <div class="date-textbox">
+                <input type="text" id="date-time" name="datetimes" />
+                    <a href="javascript:void(0)" class="clear-date" id="resetDate" @click="resetDate()">&times;</a>
+                </div>
               <div class="buttons">
                 <a href="javascript:void(0)" title="Search" class="btn-search" id="search_filter" @click="searchFilter()">
-                  <i class="icon-search-white"></i>Search</a>
+                  <i class="icon-search-white"></i></a>
                 <a href="javascript:void(0)" title="Reset" class="btn-reset" id="reset_filter" @click="resetFilter()">
-                  <i class="icon-reset"></i>Reset</a>
+                  <i class="icon-reset"></i></a>
               </div>
             </div>
           </div>
@@ -183,6 +187,8 @@
         endTime: '',
         duration: '',
         liveData: true,
+        currentDayAndMonth: ''
+
       },
       methods: {
         getAccordionDetails: function (event) {
@@ -225,6 +231,7 @@
               })
               .catch(function (error) {
                 console.log(error);
+                  self.hideLoader();
               });
           }
         },
@@ -536,10 +543,11 @@
           if (Object.keys(filterObj).length) {
             filterObj.action = 'getTraceByFilters';
             console.log("inside axios");
-            axios.post('http://ec2-54-173-70-121.compute-1.amazonaws.com:8080/api', {
+            axios.post('/api', {
               params: filterObj
             }).then(function(response){
-                app.liveData = false;
+
+console.log(response);                app.liveData = false;
                 app.loadDashboardData(respons);
                 app.myScatter.stop();
             })
