@@ -51,10 +51,11 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       var arraySpanList = respJson.life_cycle_json.spanList;
 
       for(let i=0; i<arraySpanList.length; i++) {
+
+        arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
+
         var timeDifferrence = (arraySpanList[i].endTime - arraySpanList[i].startTime);
         var duration = Math.round(timeDifferrence / 1000);
-        arraySpanList[i]['duration'] = duration +" ms";
-        arraySpanList[i]['serviceName'] = changeCase.titleCase(arraySpanList[i]['serviceName']);
 
         var status = ''
         var labelStatus = ''
@@ -74,16 +75,22 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         arraySpanList[i]['status'] = status;
         arraySpanList[i]['labelStatus'] = labelStatus;
 
-        delete arraySpanList[i].logSummary;
-        delete arraySpanList[i].children;
-        delete arraySpanList[i].traceId;
-        delete arraySpanList[i].traceName;
-
         if(arraySpanList[i].startTime>0) {
           arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        } else {
+          arraySpanList[i].startTime = "Unknown";
         }
+
         if(arraySpanList[i].endTime>0) {
           arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        } else {
+          arraySpanList[i].endTime = "Unknown";
+        }
+
+        if(arraySpanList[i].startTime<=0 || arraySpanList[i].endTime<=0) {
+          arraySpanList[i]['duration'] = "Unknown";
+        } else {
+          arraySpanList[i]['duration'] = duration +" ms";
         }
 
         var events = arraySpanList[i].events;
@@ -93,6 +100,11 @@ module.exports = class TraceInfoById extends ActionHero.Action {
           delete events[j].spanId;
           delete events[j].eventId;
         }
+
+        delete arraySpanList[i].logSummary;
+        delete arraySpanList[i].children;
+        delete arraySpanList[i].traceId;
+        delete arraySpanList[i].traceName;
       }
       responseObject.data = respJson
       responseObject.success = true
