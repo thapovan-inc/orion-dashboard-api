@@ -45,8 +45,47 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         traceId: traceId,
         life_cycle_json: JSON.parse(result[0].life_cycle_json)
       }
-      api.log('API resp : ', respJson.life_cycle_json);
+
       respJson.life_cycle_json['traceName'] = changeCase.titleCase(respJson.life_cycle_json['traceName']);
+
+      var traceTimeDifferrence = (respJson.life_cycle_json.endTime - respJson.life_cycle_json.startTime);
+      var traceDuration = Math.round(traceTimeDifferrence / 1000);
+
+      var traceStatus = ''
+      var traceLabelStatus = ''
+
+      if(respJson.life_cycle_json.traceEventSummary.ERROR != 0 || respJson.life_cycle_json.traceEventSummary.CRITICAL != 0) {
+        traceStatus = 'FAIL'
+        traceLabelStatus = 'error'
+      } else {
+        if(traceDuration > 4000) {
+          traceStatus = 'SLOW'
+          traceLabelStatus = 'warning'
+        } else {
+          traceStatus = 'PASS'
+          traceLabelStatus = 'success'
+        }
+      }
+      respJson.life_cycle_json['status'] = traceStatus;
+      respJson.life_cycle_json['labelStatus'] = traceLabelStatus;
+
+      if(respJson.life_cycle_json.startTime>0) {
+        respJson.life_cycle_json.startTime = dateFormat(respJson.life_cycle_json.startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+      } else {
+        respJson.life_cycle_json.startTime = "Unknown";
+      }
+
+      if(respJson.life_cycle_json.endTime>0) {
+        respJson.life_cycle_json.endTime = dateFormat(respJson.life_cycle_json.endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+      } else {
+        respJson.life_cycle_json.endTime = "Unknown";
+      }
+
+      if(respJson.life_cycle_json.startTime<=0 || respJson.life_cycle_json.endTime<=0) {
+        respJson.life_cycle_json['duration'] = "Unknown";
+      } else {
+        respJson.life_cycle_json['duration'] = traceDuration +" ms";
+      }
 
       var arraySpanList = respJson.life_cycle_json.spanList;
 
