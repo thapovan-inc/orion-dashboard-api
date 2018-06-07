@@ -296,6 +296,69 @@
                   }
               }
           },
+          loadDashboardDataBySearch: function (trace) {
+            console.log(trace);
+              var type = trace.type;
+
+              console.log( "search Type:" +type);
+              if (type == 'searchData') {
+                  if (trace.traceId && trace.status) {
+                      console.log( "search Type:" +trace.status);
+                      var status = trace.status;
+                      switch (status) {
+                          case 'PASS':
+                              app.myScatter.data.datasets[1].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (  app.myScatter.data.datasets[1].data.length > 50) {
+                                  app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
+                              }
+                              break;
+                          case 'FAIL':
+                              app.myScatter.data.datasets[0].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[0].data.length > 50) {
+                                  app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
+                              }
+                              break;
+                          case 'SLOW':
+                              app.myScatter.data.datasets[2].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[2].data.length > 50) {
+                                  app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                              }
+                              break;
+                      }
+                      app.myScatter.update();
+                  }
+              } else {
+                  if (trace.data) {
+                      //console.log('pass:' + JSON.stringify(trace.data));
+                      app.api = trace.data;
+                      app.myScatter.update();
+                  }
+              }
+          },
         jsonPass(key, value) {
           if ($("#span_" + key).hasClass('collapse')) { //expand the li and showsss
             $("#span_" + key).parent().parent().find('.toggle').addClass("collapse").removeClass("expand");
@@ -466,6 +529,7 @@
           $(".accordion").hide();
           this.isKeywordError = false;
           var self = this;
+          this.showLoader();
           axios.get('/api', {
               params: {
                 action: 'getTraceById',
@@ -531,28 +595,40 @@
 
           if ($('.logStatus:checkbox:checked').length > 0) {
             $('.logStatus:checkbox:checked').each(function () {
-              statusStr += (statusStr != "") ? " OR Status: " + $(this).val() : "Status: " + $(this).val();
+              statusStr += (statusStr != "") ? " OR status: " + $(this).val() : "status: " + $(this).val();
             });
           }
 
           if (statusStr != "") {
-            filterObj.statusStr = statusStr;
+            filterObj.status = statusStr;
             // queryString +="&statusStr="+statusStr;
           }
 
           if (Object.keys(filterObj).length) {
-            filterObj.action = 'getTraceByFilters';
             console.log("inside axios");
-            axios.post('/api', {
-              params: filterObj
-            }).then(function(response){
+//            var data = {
+//                'ip': '172.18.0.2'
+//            };
+            var header = {
+                'Content-Type': 'application/json'
+            }
 
-console.log(response);                app.liveData = false;
-                app.loadDashboardData(respons);
+//            this.showLoader();
+
+            axios.post('/api/traces', filterObj, header).then(function(response){
+                app.liveData = false;
+
+                console.log("live data : "+ app.liveData);
+                var resp = response.data.result.data;
+                for(var i=0;i<resp.length; i++){
+                    app.loadDashboardDataBySearch(resp[i]);
+                }
                 app.myScatter.stop();
+//                this.hideLoader();
             })
           } else {
             console.log("Search filter values are empty!!!");
+//            this.hideLoader()
           }
 
           /* if (this.keyword.trim().length === 0) {
@@ -594,7 +670,8 @@ console.log(response);                app.liveData = false;
           $("#date-time").val('');
         },
         resetFilter() {
-            //app.myScatter.clear();
+            app.myScatter.clear();
+            app.liveData= true;
             app.myScatter.reset();
         }
 
@@ -788,6 +865,9 @@ console.log(response);                app.liveData = false;
         }
     }
   </script>
+
+
+
 </body>
 
 </html>
