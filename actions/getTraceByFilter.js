@@ -1,6 +1,8 @@
 const ActionHero = require('actionhero')
 const es = require('../lib/elasticsearch')
 var _es = new es()
+var dateFormat = require('dateformat')
+var changeCase = require('change-case')
 
 module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
   constructor () {
@@ -23,56 +25,86 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
 
   async run (data) {
     const api = ActionHero.api
-    // var today = new Date();
-    // var startTime = today.setDate(today.getDate() - 1)
-    // var endTime = (new Date()).getTime()
-    // return
-    //
-    var traceId = (data.params.traceId == undefined) ? '' : data.params.traceId;
-    // var startTime = isNaN(data.params.startTime) ? startTime : (data.params.startTime).getTime();
-    // var endTime = isNaN(data.params.endTime) ? endTime : (data.params.endTime).getTime();
-    var duration = isNaN(data.params.duration) ? '' : data.params.duration;
+
+    var startTime = isNaN(data.params.startTime) ? '' : data.params.startTime;
+    var endTime = isNaN(data.params.endTime) ? '' : data.params.endTime;
     var status = (data.params.status == undefined) ? '' : data.params.status;
-    var email = (data.params.email == undefined) ? '' : data.params.email;
-    var userId = (data.params.userId == undefined) ? '' : data.params.userId;
-    var serviceName = (data.params.serviceName == undefined) ? '' : data.params.serviceName;
-    var country = (data.params.country == undefined) ? '' : data.params.country;
     var ip = (data.params.ip == undefined) ? '' : data.params.ip;
 
-    var requestObj = {
-      // startTime: startTime,
-      // endTime: endTime,
-    }
+    var requestObj = []
+
     var responseObject = {
       success: false
     }
-    if(traceId != '') {
-      requestObj.traceId = traceId
-    }
-    if(duration != '') {
-      requestObj.duration = duration
-    }
-    if(status != '') {
-      requestObj.status = status
-    }
-    if(email != '') {
-      requestObj.email = email
-    }
-    if(userId != '') {
-      requestObj.userId = userId
-    }
-    if(serviceName != '') {
-      requestObj.serviceName = serviceName
-    }
-    if(country != '') {
-      requestObj.country = country
-    }
+
+    var searchTerm = '';
+
     if(ip != '') {
-      requestObj.ip = ip
+      requestObj.push("ip: " +ip)
     }
 
+    if(status != '') {
+      requestObj.push(status)
+    }
+
+    for(let index = 0; index < requestObj.length; index++ ) {
+      if(index >= (requestObj.length-1)) {
+        searchTerm += "(" + requestObj[index] + ")";
+      } else {
+        searchTerm += "(" + requestObj[index] + ") AND ";
+      }
+    }
+
+    // responseObject.searchTerm = searchTerm
+    // responseObject.length = requestObj.length
+
     try {
-      var result = await _es.getAllTraceByFilters(requestObj)
+      var result;
+      if(searchTerm != '' && startTime != '' && endTime != '') {
+        result = await _es.getAllTraceByAllFilters(searchTerm, startTime, endTime)
+      }
+      if(searchTerm == '' && (startTime != '' && endTime != '')) {
+        result = await _es.getAllTraceByTimeRange(startTime, endTime)
+      }
+      if(searchTerm != '' && (startTime == '' && endTime == '')) {
+        result = await _es.getAllTraceBySearchTerm(searchTerm)
+      }
+
+      for(let index = 0;index< result.length; index++) {
+        var traceData = result[index];
+        var traceTimeDifferrence = (traceData.endTime - traceData.startTime)
+        var traceDuration = Math.round(traceTimeDifferrence / 1000)
+        var traceStatus = ''
+
+        if(traceData.traceEventSummary.ERROR != 0 || traceData.traceEventSummary.CRITICAL != 0) {
+          traceStatus = 'FAIL'
+        } else {
+          if(traceDuration > 4000) {
+            traceStatus = 'SLOW'
+          } else {
+            traceStatus = 'PASS'
+          }
+        }
+        traceData['duration'] = traceDuration
+        traceData['requestTime'] = Date.now(traceData.startTime)
+        traceData['status'] = traceStatus
+        traceData['serviceName'] = (traceData.traceName == undefined) ? '' : changeCase.titleCase(traceData.traceName)
+        traceData['traceName'] = (traceData.traceName == undefined) ? '' : changeCase.titleCase(traceData.traceName)
+
+        if(traceData.startTime>0) {
+          traceData.startTime = dateFormat(traceData.startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        } else {
+          traceData.startTime = "Unknown";
+        }
+
+        if(traceData.endTime>0) {
+          traceData.endTime = dateFormat(traceData.endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        }  else {
+          traceData.endTime = "Unknown";
+        }
+        traceData['type'] = 'searchData'
+
+      }
       responseObject.data = result
       responseObject.success = true
     } catch (err) {

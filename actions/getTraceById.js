@@ -69,6 +69,12 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       respJson.life_cycle_json['status'] = traceStatus;
       respJson.life_cycle_json['labelStatus'] = traceLabelStatus;
 
+      if(respJson.life_cycle_json.startTime<=0 || respJson.life_cycle_json.endTime<=0) {
+        respJson.life_cycle_json['duration'] = "Unknown";
+      } else {
+        respJson.life_cycle_json['duration'] = traceDuration +" ms";
+      }
+
       if(respJson.life_cycle_json.startTime>0) {
         respJson.life_cycle_json.startTime = dateFormat(respJson.life_cycle_json.startTime/1000, 'mm/dd/yyyy hh:ss:mm');
       } else {
@@ -79,12 +85,6 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         respJson.life_cycle_json.endTime = dateFormat(respJson.life_cycle_json.endTime/1000, 'mm/dd/yyyy hh:ss:mm');
       } else {
         respJson.life_cycle_json.endTime = "Unknown";
-      }
-
-      if(respJson.life_cycle_json.startTime<=0 || respJson.life_cycle_json.endTime<=0) {
-        respJson.life_cycle_json['duration'] = "Unknown";
-      } else {
-        respJson.life_cycle_json['duration'] = traceDuration +" ms";
       }
 
       var arraySpanList = respJson.life_cycle_json.spanList;
@@ -120,16 +120,15 @@ module.exports = class TraceInfoById extends ActionHero.Action {
           arraySpanList[i].startTime = "Unknown";
         }
 
-        if(arraySpanList[i].endTime>0) {
-          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm');
-        } else {
-          arraySpanList[i].endTime = "Unknown";
-        }
-
         if(arraySpanList[i].startTime<=0 || arraySpanList[i].endTime<=0) {
           arraySpanList[i]['duration'] = "Unknown";
         } else {
           arraySpanList[i]['duration'] = duration +" ms";
+        }
+        if(arraySpanList[i].endTime>0) {
+          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        } else {
+          arraySpanList[i].endTime = "Unknown";
         }
 
         var events = arraySpanList[i].events;
