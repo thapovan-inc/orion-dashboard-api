@@ -6,6 +6,7 @@
   <title>Orion - Tracing tool</title>
   <link type="text/css" rel="stylesheet" href="css/Roboto.css" media="all" />
   <link type="text/css" rel="stylesheet" href="css/orion.css" media="all" />
+  <link type="text/css" rel="stylesheet" href="css/daterangepicker.css" media="all" />
   <link type="text/css" rel="stylesheet" href="css/jquery.jsonview.css" media="all" />
 </head>
 
@@ -31,7 +32,7 @@
         </div>
         <div class="search-container">
           <div class="search">
-            <input type="text" name="search" id="search_term" name="search" placeholder="Lookup by Trace ID..." v-model="keyword" v-bind:class="{ error : isKeywordError}"
+            <input type="text" name="search" id="trace_id" name="search" placeholder="Lookup by Trace ID..." v-model="keyword" v-bind:class="{ error : isKeywordError}"
               @keyup.enter="traceIdSearch()" :readonly="isKeywordLoading" />
             <a href="javascript:void(0)" class="icon-search" @click="traceIdSearch()"></a>
           </div>
@@ -49,25 +50,26 @@
           <div class="search-filters">
             <div class="label">Filter By</div>
             <div class="checkbox">
-              <input name="filterby" id="passed" type="checkbox">
+              <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
               <label for="passed">Passed</label>
             </div>
             <div class="checkbox">
-              <input name="filterby" id="slow" type="checkbox">
+              <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
               <label for="slow">Slow</label>
             </div>
             <div class="checkbox">
-              <input name="filterby" id="failed" type="checkbox">
+              <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
               <label for="failed">Failed</label>
             </div>
             <div class="form-group">
-              <input type="text" name="location" value="Location" />
-              <input type="text" name="ip" value="IP" />
-              <input type="text" name="date" value="Date" />
+              <!-- <input type="text" name="location" value="Location" /> -->
+              <input type="text" name="ip" id="ip" />
+              <input type="text" id="date-time" name="datetimes" />
+              <span id="resetDate" @click="resetDate()">removeDate</span>
               <div class="buttons">
-                <a href="javascript:void(0)" title="Search" class="btn-search">
+                <a href="javascript:void(0)" title="Search" class="btn-search" id="search_filter" @click="searchFilter()">
                   <i class="icon-search-white"></i>Search</a>
-                <a href="javascript:void(0)" title="Reset" class="btn-reset">
+                <a href="javascript:void(0)" title="Reset" class="btn-reset" id="reset_filter" @click="resetFilter()">
                   <i class="icon-reset"></i>Reset</a>
               </div>
             </div>
@@ -144,6 +146,8 @@
 
   <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
   <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+  <script type="text/javascript" src="js/moment.min.js"></script>
+  <script type="text/javascript" src="js/daterangepicker.min.js"></script>
   <script type="text/javascript" src="/public/javascript/jquery.jsonview.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -427,14 +431,63 @@
               console.log(error);
             });
         },
-        search() {
-          if (this.keyword.trim().length === 0) {
+        searchFilter() {
+          let queryString = "?";
+          let dateRange = $("#date-time").val();
+          let ip = $.trim($("#ip").val());
+          let dates = dateRange.split(' - ');
+          let startDate = dates[0];
+          let endDate = dates[1];
+          let startWholedate = new Date(startDate);
+          let startTime = startWholedate.getTime();
+          let endWholedate = new Date(endDate);
+          let endTime = endWholedate.getTime();
+
+          let filterObj = {};
+
+          if (startTime > 0 && endTime > 0) {
+            filterObj.startTime = startTime;
+            filterObj.endTime = endTime;
+            // queryString += "&startTime=" + startTime + "&endTime=" + endTime;
+          }
+
+          if (ip != "") {
+            filterObj.ip = ip;
+            // queryString += "&ip=" + ip;
+          }
+
+          let statusStr = "";
+
+          if ($('.logStatus:checkbox:checked').length > 0) {
+            $('.logStatus:checkbox:checked').each(function () {
+              statusStr += (statusStr != "") ? " OR Status: " + $(this).val() : "Status: " + $(this).val();
+            });
+          }
+
+          if (statusStr != "") {
+            filterObj.statusStr = statusStr;
+            // queryString +="&statusStr="+statusStr;
+          }
+
+          if (Object.keys(filterObj).length) {
+            filterObj.action = 'getTraceByFilters';
+            console.log("inside axios");
+            axios.post('http://ec2-54-173-70-121.compute-1.amazonaws.com:8080/api', {
+              params: filterObj
+            }).then(function(response){
+              console.log("iinside then");
+            })
+          } else {
+            console.log("Search filter values are empty!!!");
+          }
+
+          /* if (this.keyword.trim().length === 0) {
             this.isKeywordError = true;
             return;
           }
           this.isKeywordError = false;
-
-          axios.post('/api', {
+ */
+          /* axios.post('/api', {
               params: {
                 action: 'getTraceByFilters',
                 apiName: this.keyword
@@ -461,7 +514,10 @@
             })
             .catch(function (error) {
               console.log(error);
-            });
+            }); */
+        },
+        resetDate() {
+          $("#date-time").val('');
         }
 
       }
@@ -569,19 +625,30 @@
       responsive: true,
       maintainAspectRatio: false,
         tooltips: {
-            callbacks: {
-                label: function (tooltipItem, data) {
-                    var label = data.datasets[tooltipItem.datasetIndex].label;
-                    var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                    return value.traceName;
-                }
+        callbacks: {
+            label: function (tooltipItem, data) {
+                var label = data.datasets[tooltipItem.datasetIndex].label;
+                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                return value.traceName;
             }
         }
+    }
     };
 
     $(document).ready(function () {
       $('#sidebarCollapse').on('click', function () {
         $('#sidebar, #content').toggleClass('active');
+      });
+      var d = new Date();
+      console.log(moment().toDate().getTime());
+
+      $('input[name="datetimes"]').daterangepicker({
+        timePicker: true,
+        startDate: moment(d.setMinutes(d.getMinutes() - 30)).format("YYYY-MM-DD HH:mm:ss"), //moment().subtract(1, "minutes").format("YYYY-MM-DD HH:MM:SS"),
+        endDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"), // moment(d).format("YYYY-MM-DD HH:MM:SS"),
+        locale: {
+          format: 'YYYY-MM-DD HH:mm:ss'
+        }
       });
 
       boot();
@@ -590,12 +657,6 @@
         data: scatterChartData,
         options: chartOptions
       });
-
-
-
-       // app.myScatter.destroy();
-
-
 
       Chart.defaults.global.defaultFontColor = 'white';
       Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 1)';
