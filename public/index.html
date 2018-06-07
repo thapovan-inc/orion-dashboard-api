@@ -710,6 +710,7 @@
       if (type == 'liveFeed') {
         if (trace.traceId && trace.status) {
           var status = trace.status;
+          console.log("chart Status= " + status);
           switch (status) {
             case 'PASS':
               app.myScatter.data.datasets[1].data.push({
