@@ -181,10 +181,13 @@
         jsonView: {},
         startTime: '',
         endTime: '',
-        duration: ''
+        duration: '',
+        liveData: true,
       },
       methods: {
         getAccordionDetails: function (event) {
+//            this.myScatter.stop();
+//            this.myScatter.destroy();
           var activePoints = this.myScatter.getElementsAtEvent(event);
           var firstPoint = activePoints[0];
           if (firstPoint !== undefined) {
@@ -225,6 +228,67 @@
               });
           }
         },
+        loadDashboardData: function (message) {
+              var trace = JSON.parse(message.message)
+              console.log(JSON.stringify(trace));
+              var type = trace.type;
+              if (type == 'liveFeed') {
+                  if (trace.traceId && trace.status) {
+                      var status = trace.status;
+                      switch (status) {
+                          case 'PASS':
+                              app.myScatter.data.datasets[1].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[1].data.length > 50) {
+                                  app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
+                              }
+                              break;
+                          case 'FAIL':
+                              app.myScatter.data.datasets[0].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[0].data.length > 50) {
+                                  app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
+                              }
+                              break;
+                          case 'SLOW':
+                              app.myScatter.data.datasets[2].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[2].data.length > 50) {
+                                  app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                              }
+                              break;
+                      }
+                      app.myScatter.update();
+                  }
+              } else {
+                  if (trace.data) {
+                      //console.log('pass:' + JSON.stringify(trace.data));
+                      app.api = trace.data;
+                      app.myScatter.update();
+                  }
+              }
+          },
         jsonPass(key, value) {
           if ($("#span_" + key).hasClass('collapse')) { //expand the li and showsss
             $("#span_" + key).parent().parent().find('.toggle').addClass("collapse").removeClass("expand");
@@ -475,7 +539,9 @@
             axios.post('http://ec2-54-173-70-121.compute-1.amazonaws.com:8080/api', {
               params: filterObj
             }).then(function(response){
-              console.log("iinside then");
+                app.liveData = false;
+                app.loadDashboardData(respons);
+                app.myScatter.stop();
             })
           } else {
             console.log("Search filter values are empty!!!");
@@ -518,6 +584,10 @@
         },
         resetDate() {
           $("#date-time").val('');
+        },
+        resetFilter() {
+            //app.myScatter.clear();
+            app.myScatter.reset();
         }
 
       }
@@ -704,65 +774,10 @@
     var statusSlow = [];
 
     var appendMessage = function (message) {
-      var trace = JSON.parse(message.message)
-      console.log(JSON.stringify(trace));
-      var type = trace.type;
-      if (type == 'liveFeed') {
-        if (trace.traceId && trace.status) {
-          var status = trace.status;
-          switch (status) {
-            case 'PASS':
-              app.myScatter.data.datasets[1].data.push({
-                x: trace.requestTime,
-                y: trace.duration,
-                traceId: trace.traceId,
-                traceName: trace.traceName,
-                startTime: trace.startTime,
-                endTime: trace.endTime,
-                duration: trace.duration
-              })
-              if (app.myScatter.data.datasets[1].data.length > 50) {
-                app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
-              }
-              break;
-            case 'FAIL':
-              app.myScatter.data.datasets[0].data.push({
-                x: trace.requestTime,
-                y: trace.duration,
-                traceId: trace.traceId,
-                traceName: trace.traceName,
-                startTime: trace.startTime,
-                endTime: trace.endTime,
-                duration: trace.duration
-              })
-              if (app.myScatter.data.datasets[0].data.length > 50) {
-                app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
-              }
-              break;
-            case 'SLOW':
-              app.myScatter.data.datasets[2].data.push({
-                x: trace.requestTime,
-                y: trace.duration,
-                traceId: trace.traceId,
-                traceName: trace.traceName,
-                startTime: trace.startTime,
-                endTime: trace.endTime,
-                duration: trace.duration
-              })
-              if (app.myScatter.data.datasets[2].data.length > 50) {
-                app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
-              }
-              break;
-          }
-          app.myScatter.update();
+
+        if (app.liveData == true) {
+           app.loadDashboardData(message)
         }
-      } else {
-        if (trace.data) {
-          //console.log('pass:' + JSON.stringify(trace.data));
-          app.api = trace.data;
-          app.myScatter.update();
-        }
-      }
     }
   </script>
 </body>
