@@ -120,26 +120,13 @@
             <div class="accordion">
               <div class="accordion-panel" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
                 <a :class="['accordion-title toggle collapse ' + value.labelStatus]" :id="['span_'+ key]" href="javascript:void(0);" @click="jsonPass(key,value)">
-                    {{ value.serviceName }}
+                  {{ value.serviceName }}
                 </a>
                 <div class="accordion-content" :id="value.spanId">
                 </div>
               </div>
             </div>
           </section>
-
-          <!-- <section class="accordion-section">
-            <ul class="accordion">
-                            <li class="span" v-for="(value, key) in requestInfo" v-if="key != 'ROOT'">
-                <a :class="['span toggle collapse ' + status]" :id="['span_'+ key]" href="javascript:void(0);" @click="jsonPass(key,value)">
-                  <pre>{{ value.serviceName }}                 Duration:{{ value.duration}}</pre>
-                </a>
-                <div :id="value.spanId" class="json-data inner">
-
-                </div>
-              </li>
-            </ul>
-          </section> -->
         </div>
       </div>
     </div>
@@ -188,69 +175,38 @@
       },
       methods: {
         getAccordionDetails: function (event) {
-          $("#trace-details").hide();
-          $(".accordion").hide();
           var activePoints = this.myScatter.getElementsAtEvent(event);
           var firstPoint = activePoints[0];
-          if(firstPoint !== undefined) {
-          value = this.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-          //        console.log(JSON.stringify(value));
-          this.traceId = value.traceId;
-          this.traceName = value.traceName;
-          this.duration = value.duration;
-          this.startTime = value.startTime;
-          this.endTime = value.endTime;
-          var self = this;
-          axios.get('/api', {
-              params: {
-                action: 'getTraceById',
-                traceId: this.traceId //pass static id here
-              }
-            })
-            .then(function (response) {
-              console.log('ES responce = ' + JSON.stringify(response));
-              var temptraceId = this.traceId;
-              var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
-              $("#trace-details").show();
-              $(".accordion").show();
-              // console.log('lifecycle=' + JSON.stringify(life_cycle_json));
-              //            for (var key in life_cycle_json) {
-              //              if (life_cycle_json.hasOwnProperty(key)) {
-              //                var val = life_cycle_json[key];
-              //                delete key.children;
-              //                delete key.events;
-              //              }
-              //            }
-              //            self.deviceInfo=response.data.result.data;
-              //            self.lifeCycle=response.data.result.data.lifeCycle;
-              self.requestInfo = life_cycle_json;
-              //            this.$nextTick(function () {
-              //              console.log(this.$el.textContent) // => 'updated'
-              //            })
-              // console.log(" responce= " + JSON.stringify(response.data.result));
-              //            var requestStatus = response.data.result.data[0].status;
-              //            if(requestStatus == 'FAIL')
-              //            {
-              //              self.status = 'error';
-              //            }
-              //            else if( requestStatus == 'PASS'){
-              //              self.status = 'success';
-              //            }
-              //            else {
-              //              self.status = 'success';
-              //            }
-              //            self.model=response.data.result.data[0].deviceInfo.model;
-              //            self.phoneType= response.data.result.data[0].deviceInfo.phoneType;
-              //            self.brand= response.data.result.data[0].deviceInfo.brand;
-              //            self.screenSize= response.data.result.data[0].deviceInfo.screenSize;
-              //            self.androidVersion= response.data.result.data[0].deviceInfo.androidversion;
-              //            self.location= response.data.result.data[0].location;
-              //            console.log(response.data.result);
-              //            console.log(" responce= " + JSON.stringify(response));
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
+          if (firstPoint !== undefined) {
+            this.showLoader();
+            $("#trace-details").hide();
+            $(".accordion").hide();
+            value = this.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+            this.traceId = value.traceId;
+            this.traceName = value.traceName;
+            this.duration = value.duration;
+            this.startTime = value.startTime;
+            this.endTime = value.endTime;
+            var self = this;
+            axios.get('/api', {
+                params: {
+                  action: 'getTraceById',
+                  traceId: this.traceId //pass static id here - '51d9cdcb-8055-4d50-95cd-e9ea870a7f1e'
+                }
+              })
+              .then(function (response) {
+                console.log('ES responce = ' + JSON.stringify(response));
+                var temptraceId = this.traceId;
+                var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
+                $("#trace-details").show();
+                $(".accordion").show();
+                self.requestInfo = life_cycle_json;
+                self.scrollToDiv();
+                self.hideLoader();
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
           }
         },
         jsonPass(key, value) {
@@ -267,140 +223,196 @@
           }
           $("#" + value.spanId).JSONView(JSON.stringify(value));
         },
-        getPass(service) {
-
-          axios.get('/api', {
-              params: {
-                action: 'getTraceById',
-                apiName: service.apiName,
-                status: 'PASS',
-              }
-            })
-            .then(function (response) {
-              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-              // console.log(" responce= " + JSON.stringify(response.data.result));
-              self.traceId = response.data.result.data[0].traceId;
-              var requestStatus = response.data.result.data[0].status;
-              if (requestStatus == 'FAIL') {
-                self.status = 'error';
-              } else if (requestStatus == 'PASS') {
-                self.status = 'success';
-              } else {
-                self.status = 'success';
-              }
-              self.model = response.data.result.data[0].deviceInfo.model;
-              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-              self.brand = response.data.result.data[0].deviceInfo.brand;
-              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-              self.location = response.data.result.data[0].location;
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        },
-        getFail(service) {
-
-          axios.get('/api', {
-              params: {
-                action: 'getTraceById',
-                apiName: service.apiName,
-                status: 'FAIL',
-              }
-            })
-            .then(function (response) {
-              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-              // console.log(" responce= " + JSON.stringify(response.data.result));
-              self.traceId = response.data.result.data[0].traceId;
-              var requestStatus = response.data.result.data[0].status;
-              if (requestStatus == 'FAIL') {
-                self.status = 'error';
-              } else if (requestStatus == 'PASS') {
-                self.status = 'success';
-              } else {
-                self.status = 'success';
-              }
-              self.model = response.data.result.data[0].deviceInfo.model;
-              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-              self.brand = response.data.result.data[0].deviceInfo.brand;
-              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-              self.location = response.data.result.data[0].location;
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        },
-        getSlow(service) {
-
-          axios.get('/api', {
-              params: {
-                action: 'getTraceById',
-                apiName: service.apiName,
-                status: 'SLOW',
-              }
-            })
-            .then(function (response) {
-              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-              // console.log(" responce= " + JSON.stringify(response.data.result));
-              self.traceId = response.data.result.data[0].traceId;
-              var requestStatus = response.data.result.data[0].status;
-              if (requestStatus == 'FAIL') {
-                self.status = 'error';
-              } else if (requestStatus == 'PASS') {
-                self.status = 'success';
-              } else {
-                self.status = 'success';
-              }
-              self.model = response.data.result.data[0].deviceInfo.model;
-              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-              self.brand = response.data.result.data[0].deviceInfo.brand;
-              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-              self.location = response.data.result.data[0].location;
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        },
-        search() {
-          if (this.keyword.trim().length === 0) {
-            this.isKeywordError = true;
-            return;
-          }
-          this.isKeywordError = false;
-
-          axios.get('/api', {
-              params: {
-                action: 'getTraceById',
-                apiName: this.keyword
-              }
-            })
-            .then(function (response) {
-              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-              // console.log(" responce= " + JSON.stringify(response.data.result));
-              self.traceId = response.data.result.data[0].traceId;
-              var requestStatus = response.data.result.data[0].status;
-              if (requestStatus == 'FAIL') {
-                self.status = 'error';
-              } else if (requestStatus == 'PASS') {
-                self.status = 'success';
-              } else {
-                self.status = 'success';
-              }
-              self.model = response.data.result.data[0].deviceInfo.model;
-              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-              self.brand = response.data.result.data[0].deviceInfo.brand;
-              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-              self.location = response.data.result.data[0].location;
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
-
+        scrollToDiv() {
+          $('html,body').animate({
+              scrollTop: $("#trace-details").offset().top
+            },
+            'slow');
+    },
+    showLoader() {
+      if ($('body').find('#loaderDiv').attr('id') != 'loaderDiv') {
+        $('body').append(
+          '<div id="loaderDiv" style="display:none"><div><img src="images/loader.gif"><div></div></div><div class="bg"></div></div>'
+        );
       }
+
+      $('#loaderDiv').css({
+        'width': '100%',
+        'height': '100%',
+        'position': 'fixed',
+        'z-index': '10000000',
+        'top': '0',
+        'left': '0',
+        'right': '0',
+        'bottom': '0',
+        'margin': 'auto'
+      });
+
+      $('#loaderDiv .bg').css({
+        'background': '#000000',
+        'opacity': '0.7',
+        'width': '100%',
+        'height': '100%',
+        'position': 'absolute',
+        'top': '0'
+      });
+
+      $('#loaderDiv>div:first').css({
+        'width': '250px',
+        'height': '75px',
+        'text-align': 'center',
+        'position': 'fixed',
+        'top': '0',
+        'left': '0',
+        'right': '0',
+        'bottom': '0',
+        'margin': 'auto',
+        'font-size': '16px',
+        'z-index': '10',
+        'color': '#ffffff'
+
+      });
+
+      $('#loaderDiv .bg').height('100%');
+      $('#loaderDiv').fadeIn(300);
+      $('body').css('cursor', 'wait');
+    },
+    hideLoader() {
+      $('#loaderDiv .bg').height('100%');
+      $('#loaderDiv').fadeOut(300);
+      $('body').css('cursor', 'default');
+    },
+    getPass(service) {
+      axios.get('/api', {
+          params: {
+            action: 'getTraceById',
+            apiName: service.apiName,
+            status: 'PASS',
+          }
+        })
+        .then(function (response) {
+          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+          // console.log(" responce= " + JSON.stringify(response.data.result));
+          self.traceId = response.data.result.data[0].traceId;
+          var requestStatus = response.data.result.data[0].status;
+          if (requestStatus == 'FAIL') {
+            self.status = 'error';
+          } else if (requestStatus == 'PASS') {
+            self.status = 'success';
+          } else {
+            self.status = 'success';
+          }
+          self.model = response.data.result.data[0].deviceInfo.model;
+          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+          self.brand = response.data.result.data[0].deviceInfo.brand;
+          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+          self.location = response.data.result.data[0].location;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    getFail(service) {
+      axios.get('/api', {
+          params: {
+            action: 'getTraceById',
+            apiName: service.apiName,
+            status: 'FAIL',
+          }
+        })
+        .then(function (response) {
+          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+          // console.log(" responce= " + JSON.stringify(response.data.result));
+          self.traceId = response.data.result.data[0].traceId;
+          var requestStatus = response.data.result.data[0].status;
+          if (requestStatus == 'FAIL') {
+            self.status = 'error';
+          } else if (requestStatus == 'PASS') {
+            self.status = 'success';
+          } else {
+            self.status = 'success';
+          }
+          self.model = response.data.result.data[0].deviceInfo.model;
+          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+          self.brand = response.data.result.data[0].deviceInfo.brand;
+          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+          self.location = response.data.result.data[0].location;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    getSlow(service) {
+      axios.get('/api', {
+          params: {
+            action: 'getTraceById',
+            apiName: service.apiName,
+            status: 'SLOW',
+          }
+        })
+        .then(function (response) {
+          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+          // console.log(" responce= " + JSON.stringify(response.data.result));
+          self.traceId = response.data.result.data[0].traceId;
+          var requestStatus = response.data.result.data[0].status;
+          if (requestStatus == 'FAIL') {
+            self.status = 'error';
+          } else if (requestStatus == 'PASS') {
+            self.status = 'success';
+          } else {
+            self.status = 'success';
+          }
+          self.model = response.data.result.data[0].deviceInfo.model;
+          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+          self.brand = response.data.result.data[0].deviceInfo.brand;
+          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+          self.location = response.data.result.data[0].location;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    search() {
+      if (this.keyword.trim().length === 0) {
+        this.isKeywordError = true;
+        return;
+      }
+      this.isKeywordError = false;
+
+      axios.get('/api', {
+          params: {
+            action: 'getTraceById',
+            apiName: this.keyword
+          }
+        })
+        .then(function (response) {
+          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+          // console.log(" responce= " + JSON.stringify(response.data.result));
+          self.traceId = response.data.result.data[0].traceId;
+          var requestStatus = response.data.result.data[0].status;
+          if (requestStatus == 'FAIL') {
+            self.status = 'error';
+          } else if (requestStatus == 'PASS') {
+            self.status = 'success';
+          } else {
+            self.status = 'success';
+          }
+          self.model = response.data.result.data[0].deviceInfo.model;
+          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+          self.brand = response.data.result.data[0].deviceInfo.brand;
+          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+          self.location = response.data.result.data[0].location;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+
+    }
     });
 
     var color = Chart.helpers.color;
@@ -414,8 +426,6 @@
           pointRadius: 10,
           pointHoverRadius: 10,
           pointBorderColor: '#F82422',
-
-
           data: []
         },
         {
@@ -426,7 +436,6 @@
           pointRadius: 10,
           pointHoverRadius: 10,
           pointBorderColor: '#39f83b',
-
           data: []
         },
         {
@@ -437,7 +446,6 @@
           pointRadius: 10,
           pointHoverRadius: 10,
           pointBorderColor: '#f8e315',
-
           data: []
         }
       ]
@@ -447,38 +455,38 @@
         yAxes: [{
           type: 'linear',
           display: true,
-            ticks: {
-                beginAtZero: true
-            },
+          ticks: {
+            beginAtZero: true
+          },
           scaleLabel: {
             display: true,
             labelString: 'Request Duration (ms)'
           },
           gridLines: {
             color: "rgba(255,255,255,0.3)",
-            lineWidth:0.1,
-            zeroLineColor :"#fff",
-            zeroLineWidth :.1
+            lineWidth: 0.1,
+            zeroLineColor: "#fff",
+            zeroLineWidth: .1
           },
         }],
         xAxes: [{
           type: 'time',
           display: true,
-//          time: {
-//            unit: 'minute',
-//            displayFormats: {
-//              'minute': 'hh:mm a'
-//            }
-//          },
+          //          time: {
+          //            unit: 'minute',
+          //            displayFormats: {
+          //              'minute': 'hh:mm a'
+          //            }
+          //          },
           scaleLabel: {
             display: true,
             labelString: 'Request initiation Time'
           },
           gridLines: {
             color: "rgba(255,255,255,0.3)",
-            lineWidth:0.1,
-            zeroLineColor:"#fff",
-            zeroLineWidth:.1
+            lineWidth: 0.1,
+            zeroLineColor: "#fff",
+            zeroLineWidth: .1
           },
         }],
         pan: {
@@ -490,29 +498,24 @@
           mode: 'xy',
         }
       },
-      //    tooltips: {
-      //      callbacks: {
-      //        title: function(items, data) { data.datasets[items[0].datasetIndex].data[items[0].index].traceId },
-      //      label: function(item, data) { data.datasets[item.datasetIndex].data[item.index].duration },
-      //    cornerRadius: 0,
-      //    caretSize: 0,
-      //    xPadding: 16,
-      //    yPadding: 10,
-      //    backgroundColor: 'rgba(0, 150, 100, 0.9)',
-      //    titleFontStyle: 'normal',
-      //    titleMarginBottom: 15
-      //  }
-      //  },
       legend: {
-        display: true
+        display: true,
+        padding: {
+          top: 100
+        },
+        onHover: function (e) {
+          e.target.style.cursor = 'pointer';
+        }
+      },
+      hover: {
+        onHover: function (e) {
+          var point = this.getElementAtEvent(e);
+          if (point.length) e.target.style.cursor = 'pointer';
+          else e.target.style.cursor = 'default';
+        }
       },
       responsive: true,
       maintainAspectRatio: false,
-      legend: {
-        padding: {
-          top: 100
-        }
-      }
     };
 
     $(document).ready(function () {
@@ -529,45 +532,6 @@
 
       Chart.defaults.global.defaultFontColor = 'white';
       Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 1)';
-
-      //  document.getElementById("livefeed").onclick = function(evt){
-      //    var activePoints = window.myScatter.getElementsAtEvent(evt);
-      //    var firstPoint = activePoints[0];
-      //    value = window.myScatter.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-      //    console.log(JSON.stringify(value));
-      //
-      //    axios.get('/api', {
-      //      params: {
-      //        action: 'getTraceById',
-      //        traceId: value.traceId
-      //      }
-      //    })
-      //      .then(function (response) {
-      //        app.result.data=response;
-      //        console.log(response);
-      //      })
-      //      .catch(function (error) {
-      //        console.log(error);
-      //      });
-      //  }
-
-    });
-    $('.toggle').click(function (e) {
-      e.preventDefault();
-
-      var $this = $(this);
-
-      if ($this.next().hasClass('show')) {
-        $this.next().removeClass('show');
-        $this.next().slideUp(350);
-        $this.removeClass('expand').addClass('collapse');
-      } else {
-        $this.parent().parent().find('li .inner').removeClass('show');
-        $this.parent().parent().find('li .inner').slideUp(350);
-        $this.next().toggleClass('show');
-        $this.next().slideToggle(350);
-        $this.removeClass('collapse').addClass('expand');
-      }
     });
 
     var client;
@@ -605,9 +569,6 @@
           });
         }
       });
-      //      client.roomLeave('lifeFeed');
-      //      client.disconnect();
-
     }
 
     var statusPass = [];
@@ -615,17 +576,12 @@
     var statusSlow = [];
 
     var appendMessage = function (message) {
-
       var trace = JSON.parse(message.message)
       console.log(JSON.stringify(trace));
-
       var type = trace.type;
-
       if (type == 'liveFeed') {
-
         if (trace.traceId && trace.status) {
           var status = trace.status;
-
           switch (status) {
             case 'PASS':
               app.myScatter.data.datasets[1].data.push({
@@ -670,19 +626,13 @@
               }
               break;
           }
-          //      console.log('pass:' + JSON.stringify(statusPass));
-          //      console.log('fail:' + JSON.stringify(statusFail));
-          //      console.log('slow:' + JSON.stringify(statusSlow));
-          //console.log(window.myScatter.data.datasets[0].data);
           app.myScatter.update();
-
         }
       } else {
         if (trace.data) {
           //console.log('pass:' + JSON.stringify(trace.data));
           app.api = trace.data;
           app.myScatter.update();
-
         }
       }
     }
