@@ -31,9 +31,9 @@
         </div>
         <div class="search-container">
           <div class="search">
-            <input type="text" name="search" name="search" placeholder="Lookup by Trace ID..." v-model="keyword" v-bind:class="{ error : isKeywordError}"
-              @keyup.enter="search()" :readonly="isKeywordLoading" />
-            <a href="javascript:void(0)" class="icon-search"></a>
+            <input type="text" name="search" id="search_term" name="search" placeholder="Lookup by Trace ID..." v-model="keyword" v-bind:class="{ error : isKeywordError}"
+              @keyup.enter="traceIdSearch()" :readonly="isKeywordLoading" />
+            <a href="javascript:void(0)" class="icon-search" @click="traceIdSearch()"></a>
           </div>
         </div>
       </div>
@@ -64,6 +64,12 @@
               <input type="text" name="location" value="Location" />
               <input type="text" name="ip" value="IP" />
               <input type="text" name="date" value="Date" />
+              <div class="buttons">
+                <a href="javascript:void(0)" title="Search" class="btn-search">
+                  <i class="icon-search-white"></i>Search</a>
+                <a href="javascript:void(0)" title="Reset" class="btn-reset">
+                  <i class="icon-reset"></i>Reset</a>
+              </div>
             </div>
           </div>
         </div>
@@ -200,8 +206,14 @@
                 var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
                 $("#trace-details").show();
                 $(".accordion").show();
+                $('.toggle').addClass("collapse").removeClass("expand");
+                $('.accordion-content').removeClass("show").hide();
                 self.requestInfo = life_cycle_json;
-                self.scrollToDiv();
+                self.$nextTick(() => {
+                  $('html,body').animate({
+                    scrollTop: $("#trace-details").offset().top
+                  }, 2500)
+                })
                 self.hideLoader();
               })
               .catch(function (error) {
@@ -223,196 +235,236 @@
           }
           $("#" + value.spanId).JSONView(JSON.stringify(value));
         },
-        scrollToDiv() {
-          $('html,body').animate({
-              scrollTop: $("#trace-details").offset().top
-            },
-            'slow');
-    },
-    showLoader() {
-      if ($('body').find('#loaderDiv').attr('id') != 'loaderDiv') {
-        $('body').append(
-          '<div id="loaderDiv" style="display:none"><div><img src="images/loader.gif"><div></div></div><div class="bg"></div></div>'
-        );
+        showLoader() {
+          if ($('body').find('#loaderDiv').attr('id') != 'loaderDiv') {
+            $('body').append(
+              '<div id="loaderDiv" style="display:none"><div><img src="images/loader.gif"><div></div></div><div class="bg"></div></div>'
+            );
+          }
+
+          $('#loaderDiv').css({
+            'width': '100%',
+            'height': '100%',
+            'position': 'fixed',
+            'z-index': '10000000',
+            'top': '0',
+            'left': '0',
+            'right': '0',
+            'bottom': '0',
+            'margin': 'auto'
+          });
+
+          $('#loaderDiv .bg').css({
+            'background': '#000000',
+            'opacity': '0.7',
+            'width': '100%',
+            'height': '100%',
+            'position': 'absolute',
+            'top': '0'
+          });
+
+          $('#loaderDiv>div:first').css({
+            'width': '250px',
+            'height': '75px',
+            'text-align': 'center',
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'right': '0',
+            'bottom': '0',
+            'margin': 'auto',
+            'font-size': '16px',
+            'z-index': '10',
+            'color': '#ffffff'
+
+          });
+
+          $('#loaderDiv .bg').height('100%');
+          $('#loaderDiv').fadeIn(300);
+          $('body').css('cursor', 'wait');
+        },
+        hideLoader() {
+          $('#loaderDiv .bg').height('100%');
+          $('#loaderDiv').fadeOut(300);
+          $('body').css('cursor', 'default');
+        },
+        getPass(service) {
+          axios.get('/api', {
+              params: {
+                action: 'getTraceById',
+                apiName: service.apiName,
+                status: 'PASS',
+              }
+            })
+            .then(function (response) {
+              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+              // console.log(" responce= " + JSON.stringify(response.data.result));
+              self.traceId = response.data.result.data[0].traceId;
+              var requestStatus = response.data.result.data[0].status;
+              if (requestStatus == 'FAIL') {
+                self.status = 'error';
+              } else if (requestStatus == 'PASS') {
+                self.status = 'success';
+              } else {
+                self.status = 'success';
+              }
+              self.model = response.data.result.data[0].deviceInfo.model;
+              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+              self.brand = response.data.result.data[0].deviceInfo.brand;
+              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+              self.location = response.data.result.data[0].location;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+        getFail(service) {
+          axios.get('/api', {
+              params: {
+                action: 'getTraceById',
+                apiName: service.apiName,
+                status: 'FAIL',
+              }
+            })
+            .then(function (response) {
+              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+              // console.log(" responce= " + JSON.stringify(response.data.result));
+              self.traceId = response.data.result.data[0].traceId;
+              var requestStatus = response.data.result.data[0].status;
+              if (requestStatus == 'FAIL') {
+                self.status = 'error';
+              } else if (requestStatus == 'PASS') {
+                self.status = 'success';
+              } else {
+                self.status = 'success';
+              }
+              self.model = response.data.result.data[0].deviceInfo.model;
+              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+              self.brand = response.data.result.data[0].deviceInfo.brand;
+              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+              self.location = response.data.result.data[0].location;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+        getSlow(service) {
+          axios.get('/api', {
+              params: {
+                action: 'getTraceById',
+                apiName: service.apiName,
+                status: 'SLOW',
+              }
+            })
+            .then(function (response) {
+              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+              // console.log(" responce= " + JSON.stringify(response.data.result));
+              self.traceId = response.data.result.data[0].traceId;
+              var requestStatus = response.data.result.data[0].status;
+              if (requestStatus == 'FAIL') {
+                self.status = 'error';
+              } else if (requestStatus == 'PASS') {
+                self.status = 'success';
+              } else {
+                self.status = 'success';
+              }
+              self.model = response.data.result.data[0].deviceInfo.model;
+              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+              self.brand = response.data.result.data[0].deviceInfo.brand;
+              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+              self.location = response.data.result.data[0].location;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+        traceIdSearch() {
+          if (this.keyword.trim().length === 0) {
+            this.isKeywordError = true;
+            return;
+          }
+          this.showLoader();
+          $("#trace-details").hide();
+          $(".accordion").hide();
+          this.isKeywordError = false;
+          var self = this;
+          axios.get('/api', {
+              params: {
+                action: 'getTraceById',
+                traceId: this.keyword
+              }
+            })
+            .then(function (response) {
+              if (response.data.result.success) {
+                var lifeCycle = response.data.result.data.life_cycle_json;
+                console.log(lifeCycle, "lifeCycle");
+                self.traceId = lifeCycle.traceId;
+                self.traceName = lifeCycle.traceName;
+                self.startTime = "Start time here";
+                self.endTime = "End time here";
+                self.duration = "Duration here";
+                var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
+                $("#trace-details").show();
+                $(".accordion").show();
+                $('.toggle').addClass("collapse").removeClass("expand");
+                $('.accordion-content').removeClass("show").hide();
+                self.requestInfo = life_cycle_json;
+                self.$nextTick(() => {
+                  $('html,body').animate({
+                    scrollTop: $("#trace-details").offset().top
+                  }, 2500)
+                })
+                self.hideLoader();
+              } else {
+                alert("No records found");
+                self.hideLoader();
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+        search() {
+          if (this.keyword.trim().length === 0) {
+            this.isKeywordError = true;
+            return;
+          }
+          this.isKeywordError = false;
+
+          axios.post('/api', {
+              params: {
+                action: 'getTraceByFilters',
+                apiName: this.keyword
+              }
+            })
+            .then(function (response) {
+              self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
+              // console.log(" responce= " + JSON.stringify(response.data.result));
+              self.traceId = response.data.result.data[0].traceId;
+              var requestStatus = response.data.result.data[0].status;
+              if (requestStatus == 'FAIL') {
+                self.status = 'error';
+              } else if (requestStatus == 'PASS') {
+                self.status = 'success';
+              } else {
+                self.status = 'success';
+              }
+              self.model = response.data.result.data[0].deviceInfo.model;
+              self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
+              self.brand = response.data.result.data[0].deviceInfo.brand;
+              self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
+              self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
+              self.location = response.data.result.data[0].location;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+
       }
-
-      $('#loaderDiv').css({
-        'width': '100%',
-        'height': '100%',
-        'position': 'fixed',
-        'z-index': '10000000',
-        'top': '0',
-        'left': '0',
-        'right': '0',
-        'bottom': '0',
-        'margin': 'auto'
-      });
-
-      $('#loaderDiv .bg').css({
-        'background': '#000000',
-        'opacity': '0.7',
-        'width': '100%',
-        'height': '100%',
-        'position': 'absolute',
-        'top': '0'
-      });
-
-      $('#loaderDiv>div:first').css({
-        'width': '250px',
-        'height': '75px',
-        'text-align': 'center',
-        'position': 'fixed',
-        'top': '0',
-        'left': '0',
-        'right': '0',
-        'bottom': '0',
-        'margin': 'auto',
-        'font-size': '16px',
-        'z-index': '10',
-        'color': '#ffffff'
-
-      });
-
-      $('#loaderDiv .bg').height('100%');
-      $('#loaderDiv').fadeIn(300);
-      $('body').css('cursor', 'wait');
-    },
-    hideLoader() {
-      $('#loaderDiv .bg').height('100%');
-      $('#loaderDiv').fadeOut(300);
-      $('body').css('cursor', 'default');
-    },
-    getPass(service) {
-      axios.get('/api', {
-          params: {
-            action: 'getTraceById',
-            apiName: service.apiName,
-            status: 'PASS',
-          }
-        })
-        .then(function (response) {
-          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-          // console.log(" responce= " + JSON.stringify(response.data.result));
-          self.traceId = response.data.result.data[0].traceId;
-          var requestStatus = response.data.result.data[0].status;
-          if (requestStatus == 'FAIL') {
-            self.status = 'error';
-          } else if (requestStatus == 'PASS') {
-            self.status = 'success';
-          } else {
-            self.status = 'success';
-          }
-          self.model = response.data.result.data[0].deviceInfo.model;
-          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-          self.brand = response.data.result.data[0].deviceInfo.brand;
-          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-          self.location = response.data.result.data[0].location;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    getFail(service) {
-      axios.get('/api', {
-          params: {
-            action: 'getTraceById',
-            apiName: service.apiName,
-            status: 'FAIL',
-          }
-        })
-        .then(function (response) {
-          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-          // console.log(" responce= " + JSON.stringify(response.data.result));
-          self.traceId = response.data.result.data[0].traceId;
-          var requestStatus = response.data.result.data[0].status;
-          if (requestStatus == 'FAIL') {
-            self.status = 'error';
-          } else if (requestStatus == 'PASS') {
-            self.status = 'success';
-          } else {
-            self.status = 'success';
-          }
-          self.model = response.data.result.data[0].deviceInfo.model;
-          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-          self.brand = response.data.result.data[0].deviceInfo.brand;
-          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-          self.location = response.data.result.data[0].location;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    getSlow(service) {
-      axios.get('/api', {
-          params: {
-            action: 'getTraceById',
-            apiName: service.apiName,
-            status: 'SLOW',
-          }
-        })
-        .then(function (response) {
-          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-          // console.log(" responce= " + JSON.stringify(response.data.result));
-          self.traceId = response.data.result.data[0].traceId;
-          var requestStatus = response.data.result.data[0].status;
-          if (requestStatus == 'FAIL') {
-            self.status = 'error';
-          } else if (requestStatus == 'PASS') {
-            self.status = 'success';
-          } else {
-            self.status = 'success';
-          }
-          self.model = response.data.result.data[0].deviceInfo.model;
-          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-          self.brand = response.data.result.data[0].deviceInfo.brand;
-          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-          self.location = response.data.result.data[0].location;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    search() {
-      if (this.keyword.trim().length === 0) {
-        this.isKeywordError = true;
-        return;
-      }
-      this.isKeywordError = false;
-
-      axios.get('/api', {
-          params: {
-            action: 'getTraceById',
-            apiName: this.keyword
-          }
-        })
-        .then(function (response) {
-          self.serviceName = response.data.result.data[0].lifeCycle[0].serviceName;
-          // console.log(" responce= " + JSON.stringify(response.data.result));
-          self.traceId = response.data.result.data[0].traceId;
-          var requestStatus = response.data.result.data[0].status;
-          if (requestStatus == 'FAIL') {
-            self.status = 'error';
-          } else if (requestStatus == 'PASS') {
-            self.status = 'success';
-          } else {
-            self.status = 'success';
-          }
-          self.model = response.data.result.data[0].deviceInfo.model;
-          self.phoneType = response.data.result.data[0].deviceInfo.phoneType;
-          self.brand = response.data.result.data[0].deviceInfo.brand;
-          self.screenSize = response.data.result.data[0].deviceInfo.screenSize;
-          self.androidVersion = response.data.result.data[0].deviceInfo.androidversion;
-          self.location = response.data.result.data[0].location;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-
-    }
     });
 
     var color = Chart.helpers.color;
