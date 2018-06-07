@@ -481,7 +481,7 @@
           data: []
         },
         {
-          label: 'Success',
+          label: 'Passed',
           backgroundColor: '#39f83b',
           pointBackgroundColor: '#39f83b',
           borderWidth: 1,
@@ -491,7 +491,7 @@
           data: []
         },
         {
-          label: 'Delay',
+          label: 'Slow',
           backgroundColor: '#f8e315',
           pointBackgroundColor: '#f8e315',
           borderWidth: 1,
@@ -568,6 +568,15 @@
       },
       responsive: true,
       maintainAspectRatio: false,
+        tooltips: {
+            callbacks: {
+                label: function (tooltipItem, data) {
+                    var label = data.datasets[tooltipItem.datasetIndex].label;
+                    var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                    return value.traceName;
+                }
+            }
+        }
     };
 
     $(document).ready(function () {
@@ -581,6 +590,12 @@
         data: scatterChartData,
         options: chartOptions
       });
+
+
+
+       // app.myScatter.destroy();
+
+
 
       Chart.defaults.global.defaultFontColor = 'white';
       Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 1)';
