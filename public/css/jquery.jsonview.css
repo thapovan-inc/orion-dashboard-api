@@ -1,100 +1,81 @@
-@charset "UTF-8";
 .jsonview {
-  font-size: 1.1em;
-  font-weight: 300;
-  white-space: pre-wrap;
+	font-size: 14px;
+	font-weight: 300;
+	line-height:1.5;
+	white-space: pre-wrap;
 }
-
 .jsonview .prop {
-  text-decoration: none;
-  color: #fff;
-  font-weight:400;
+	text-decoration: none;
+	color: #fff;
+	font-weight:400;
 }
-
 .jsonview .prop + a, .jsonview .prop + span{
-  color:#fff;
-  text-decoration: none;
-  margin-left: 10px;
+	color:#fff;
+	text-decoration: none;
+	margin-left: 10px;
 }
-
 .jsonview .null {
-  color: red;
-  margin-left: 10px;
+	color: red;
+	margin-left: 10px;
 }
-
 .jsonview .undefined {
-  color: red;
-  margin-left: 10px;
+	color: red;
+	margin-left: 10px;
 }
-
 .jsonview .bool {
-  color: #fff;
-  margin-left: 10px;
+	color: #fff;
+	margin-left: 10px;
 }
-
 .jsonview .num {
-  color: #fff;
-  margin-left: 10px;
+	color: #fff;
+	margin-left: 10px;
 }
-
 .jsonview .string {
-  color: #fff;
-  margin-left: 10px;
-  white-space: pre-wrap;
+	color: #fff;
+	margin-left: 10px;
+	white-space: pre-wrap;
 }
-
 .jsonview .string.multiline {
-  display: inline-block;
-  vertical-align: text-top;
+	display: inline-block;
+	vertical-align: text-top;
 }
-
 .jsonview .collapser {
-  position: absolute;
-  left: -1em;
-  cursor: pointer;
+	position: absolute;
+	left: -1em;
+	cursor: pointer;
 }
-
 .jsonview .collapsible {
-  transition: height 1.2s;
-  transition: width 1.2s;
+	transition: height 1.2s;
+	transition: width 1.2s;
 }
-
 .jsonview .collapsible.collapsed {
-  height: .8em;
-  width: 1em;
-  display: inline-block;
-  overflow: hidden;
-  margin: 0;
+	height: .8em;
+	width: 1em;
+	display: inline-block;
+	overflow: hidden;
+	margin: 0;
 }
-
 .jsonview .collapsible.collapsed:before {
-  content: "…";
-  width: 1em;
-  margin-left: .2em;
+	content: "…";
+	width: 1em;
+	margin-left: .2em;
 }
-
 .jsonview .collapser.collapsed {
-  transform: rotate(0deg);
+	transform: rotate(0deg);
 }
-
 .jsonview .q {
-  display: inline-block;
-  width: 0px;
-  color: transparent;
+	display: inline-block;
+	width: 0px;
+	color: transparent;
 }
-
 .jsonview li {
-  position: relative;
+	position: relative;
 }
-
 .jsonview ul {
-  list-style: none;
-  margin: 0 0 0 2em;
-  padding: 0;
+	list-style: none;
+	margin: 0 0 0 2em;
+	padding: 0;
 }
-
 .jsonview h1 {
-  font-size: 1.2em;
+	font-size: 1.2em;
 }
-
-/*# sourceMappingURL=jquery.jsonview.css.map */
