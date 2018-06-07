@@ -102,6 +102,7 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
         }  else {
           traceData.endTime = "Unknown";
         }
+        traceData['type'] = 'searchData'
 
       }
       responseObject.data = result
