@@ -26,8 +26,8 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
   async run (data) {
     const api = ActionHero.api
 
-    var startTime = isNaN(data.params.startTime) ? '' : data.params.startTime;
-    var endTime = isNaN(data.params.endTime) ? '' : data.params.endTime;
+    var startTime = (data.params.startTime == undefined) ? '' : new Date(data.params.startTime).getTime();
+    var endTime = isNaN(data.params.endTime == undefined) ? '' : new Date(data.params.endTime).getTime();
     var status = (data.params.status == undefined) ? '' : data.params.status;
     var ip = (data.params.ip == undefined) ? '' : data.params.ip;
 
@@ -54,19 +54,25 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
         searchTerm += "(" + requestObj[index] + ") AND ";
       }
     }
-
-    // responseObject.searchTerm = searchTerm
-    // responseObject.length = requestObj.length
-
+    api.log("searchterm : ", searchTerm);
+    api.log("startTime : ", startTime);
+    api.log("endTime : ", endTime);
     try {
       var result;
       if(searchTerm != '' && startTime != '' && endTime != '') {
-        result = await _es.getAllTraceByAllFilters(searchTerm, startTime, endTime)
+        var startMicroSeconds = startTime*1000;
+        var endMicroSeconds = endTime*1000;
+        api.log("getAllTraceByAllFilters = startTime = "+ startMicroSeconds +" endTime " + endMicroSeconds +" search Term " + searchTerm)
+        result = await _es.getAllTraceByAllFilters(searchTerm, startMicroSeconds, endMicroSeconds)
       }
       if(searchTerm == '' && (startTime != '' && endTime != '')) {
-        result = await _es.getAllTraceByTimeRange(startTime, endTime)
+        var startMicroSeconds = startTime*1000;
+        var endMicroSeconds = endTime*1000;
+        api.log("getAllTraceByTimeRange = startTime = "+ startMicroSeconds +" endTime " + endMicroSeconds +" search Term " + searchTerm)
+        result = await _es.getAllTraceByTimeRange(startMicroSeconds, endMicroSeconds)
       }
       if(searchTerm != '' && (startTime == '' && endTime == '')) {
+        api.log("getAllTraceBySearchTerm = startTime = "+ startMicroSeconds +" endTime " + endMicroSeconds +" search Term " + searchTerm)
         result = await _es.getAllTraceBySearchTerm(searchTerm)
       }
 
@@ -85,26 +91,26 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
             traceStatus = 'PASS'
           }
         }
-        traceData['duration'] = traceDuration
-        traceData['requestTime'] = Date.now(traceData.startTime)
+        traceData['duration'] = (traceDuration <=0 ) ? 0 : traceDuration;
+        traceData['requestTime'] = Date.now(traceData.startTime);
         traceData['status'] = traceStatus
         traceData['serviceName'] = (traceData.traceName == undefined) ? '' : changeCase.titleCase(traceData.traceName)
         traceData['traceName'] = (traceData.traceName == undefined) ? '' : changeCase.titleCase(traceData.traceName)
 
         if(traceData.startTime>0) {
-          traceData.startTime = dateFormat(traceData.startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+          traceData.startTime = dateFormat(traceData.startTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
         } else {
           traceData.startTime = "Unknown";
         }
 
         if(traceData.endTime>0) {
-          traceData.endTime = dateFormat(traceData.endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+          traceData.endTime = dateFormat(traceData.endTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
         }  else {
           traceData.endTime = "Unknown";
         }
         traceData['type'] = 'searchData'
-
       }
+
       responseObject.data = result
       responseObject.success = true
     } catch (err) {
