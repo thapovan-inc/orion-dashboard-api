@@ -4,6 +4,7 @@ const Kafka = require('../lib/Kafka')
 var kafkaObj = new Kafka()
 
 const broadcastLifeFeed = (message) => {
+  api.log("broadcast message : ", message)
   api.chatRoom.broadcast({}, 'lifeFeed', message)
 }
 
