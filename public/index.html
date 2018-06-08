@@ -841,6 +841,11 @@
           label: function (tooltipItem, data) {
             var label = data.datasets[tooltipItem.datasetIndex].label;
             var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+            return "ID: "+value.traceId;
+          },
+          title: function (tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label;
+            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
             return value.traceName;
           }
         }
