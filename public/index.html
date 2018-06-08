@@ -196,8 +196,6 @@
       },
       methods: {
         getAccordionDetails: function (event) {
-//            this.myScatter.stop();
-//            this.myScatter.destroy();
           var activePoints = this.myScatter.getElementsAtEvent(event);
           var firstPoint = activePoints[0];
           if (firstPoint !== undefined) {
