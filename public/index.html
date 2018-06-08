@@ -196,10 +196,12 @@
       },
       methods: {
         getAccordionDetails: function (event) {
+          event.preventDefault();
           var activePoints = this.myScatter.getElementsAtEvent(event);
           console.log("Event object");
           console.log(event);
-          var firstPoint = activePoints[0];
+          console.log(activePoints);
+          var firstPoint = activePoints[activePoints.length-1];
           if (firstPoint !== undefined) {
             this.showLoader();
             $("#trace-details").hide();
@@ -315,15 +317,33 @@
                       console.log("bobble Status= " + trace.status);
                       console.log("bobble TraceId= " + trace.traceId);
                       var status = trace.status;
-                      app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
-                        return obj && obj.traceId !== trace.traceId
-                      });
-                      app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.filter((obj) => {
-                        return obj && obj.traceId !== trace.traceId
+                      var newArr0 = app.myScatter.data.datasets[0].data.filter((obj) => {
+                      return obj && obj.traceId !== trace.traceId
+                    });
+                      app.myScatter.data.datasets[0].data.forEach((_) => {
+                        app.myScatter.data.datasets[0].data.pop()
                       })
-                     app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.filter((obj) => {
-                        return obj && obj.traceId !== trace.traceId
-                      })
+                    newArr0.forEach((d) => {
+                      app.myScatter.data.datasets[0].data.push(d);
+                    })
+                    var newArr1 = app.myScatter.data.datasets[1].data.filter((obj) => {
+                      return obj && obj.traceId !== trace.traceId
+                    });
+                    app.myScatter.data.datasets[1].data.forEach((_) => {
+                      app.myScatter.data.datasets[1].data.pop()
+                    })
+                    newArr1.forEach((d) => {
+                      app.myScatter.data.datasets[1].data.push(d);
+                    })
+                    var newArr2 = app.myScatter.data.datasets[2].data.filter((obj) => {
+                      return obj && obj.traceId !== trace.traceId
+                    });
+                    app.myScatter.data.datasets[2].data.forEach((_) => {
+                      app.myScatter.data.datasets[2].data.pop()
+                    })
+                    newArr2.forEach((d) => {
+                      app.myScatter.data.datasets[2].data.push(d);
+                    })
                       switch (status) {
                           case 'PASS':
                               app.myScatter.data.datasets[0].data.push({
@@ -731,7 +751,7 @@
           backgroundColor: '#39f83b',
           pointBackgroundColor: '#39f83b',
           borderWidth: 1,
-          pointRadius: 8,
+          pointRadius: 4,
           pointHoverBackgroundColor: '#0f9747',
           pointHoverBorderColor: '#0f9747',
           pointHoverRadius: 10,
@@ -743,7 +763,7 @@
           backgroundColor: '#f8e315',
           pointBackgroundColor: '#f8e315',
           borderWidth: 1,
-          pointRadius: 8,
+          pointRadius: 4,
           pointHoverBackgroundColor: '#ff9800',
           pointHoverBorderColor: '#ff9800',
           pointHoverRadius: 9,
@@ -835,7 +855,7 @@
         callbacks: {
           label: function (tooltipItem, data) {
             var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-            return value.traceName;
+            return value.traceId+value.traceName;
           }
         }
       }
