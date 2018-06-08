@@ -792,7 +792,7 @@
           ticks: {
             beginAtZero: true,
             callback: function(...args) {
-              const value = ChartJS.Ticks.formatters.logarithmic.call(this, ...args);
+              const value = Chart.Ticks.formatters.logarithmic.call(this, ...args);
               if (value.length) {
                 return Number(value).toLocaleString()
               }
