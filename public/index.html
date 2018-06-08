@@ -247,14 +247,11 @@
           }, 3000);
         },
         loadDashboardDataBySearch: function (trace) {
-          console.log(trace);
           var type = trace.type;
-
-          console.log("search Type:" + type);
           if (type == 'searchData') {
             if (trace.traceId && trace.status) {
-              console.log("search Type:" + trace.status);
-                console.log("search Traceid= " + trace.traceId);
+                console.log("search Type:" + trace.status);
+                console.log("search Traceid : " + trace.traceId);
               var status = trace.status;
               switch (status) {
                 case 'PASS':
@@ -316,6 +313,7 @@
               if (type == 'liveFeed') {
                   if (trace.traceId && trace.status) {
                       console.log("bobble Status= " + trace.status);
+                      console.log("bobble TraceId= " + trace.traceId);
                       var status = trace.status;
                       app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
                         return obj && obj.traceId !== trace.traceId
@@ -560,7 +558,7 @@
             .then(function (response) {
               if (response.data.result.success) {
                 var lifeCycle = response.data.result.data.life_cycle_json;
-                console.log(response.data.result.data, "TraceIdSearch");
+               // console.log(response.data.result.data, "TraceIdSearch");
                 self.traceId = lifeCycle.traceId;
                 self.traceName = lifeCycle.traceName;
                 self.startTime = lifeCycle.startTime;
@@ -655,10 +653,6 @@
                     for (var i = 0; i < resp.length; i++) {
                         app.loadDashboardDataBySearch(resp[i]);
                     }
-                    console.log("search update")
-                    console.log(app.myScatter.data.datasets[0].data);
-                    console.log(app.myScatter.data.datasets[1].data);
-                    console.log(app.myScatter.data.datasets[2].data);
                     app.myScatter.update();
                     //app.myScatter.render();
                     self.hideLoader()
@@ -918,7 +912,7 @@
 
     var appendMessage = function (message) {
 
-console.log(message);
+//console.log(message);
         var trace = JSON.parse(message.message);
         if (app.liveData == true) {
            app.loadDashboardData(trace)
