@@ -24,7 +24,7 @@
         <div class="user-details">
           <div class="user-info">
             <p>Welcome Vaidy!</p>
-            <p>Jun 8 Friday</p>
+            <p>{{ todayDate }}</p>
           </div>
           <div class="thumb">
             <img src="images/avatar.png" alt="Vaidy" />
@@ -50,18 +50,18 @@
           <div class="search-filters">
               <div class="search-options">
               <div class="label">Filter By</div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
-              <label for="passed">Passed</label>
-            </div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
-              <label for="slow">Slow</label>
-            </div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
-              <label for="failed">Failed</label>
-            </div>
+                <div class="checkbox">
+                  <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
+                  <label for="failed">Failed</label>
+                </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
+                <label for="passed">Passed</label>
+              </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
+                <label for="slow">Slow</label>
+              </div>
               </div>
             <div class="form-group">
               <!-- <input type="text" name="location" value="Location" /> -->
@@ -163,6 +163,7 @@
         serviceName: null,
         traceId: null,
         traceName: null,
+        todayDate: moment().format('MMM D dddd'),
         model: null,
         phoneType: null,
         brand: null,
