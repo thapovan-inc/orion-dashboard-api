@@ -65,7 +65,7 @@
             </div>
             <div class="form-group">
               <!-- <input type="text" name="location" value="Location" /> -->
-              <input type="text" name="ip" id="ip" />
+              <input type="text" name="ip" id="ip" @keyup.enter="searchFilter()" />
               <div class="date-textbox">
                 <input type="text" id="date-time" name="datetimes" />
                 <a href="javascript:void(0)" class="clear-date" id="resetDate" @click="resetDate()">&times;</a>
@@ -683,7 +683,7 @@
             .then(function (response) {
               if (response.data.result.success) {
                 var lifeCycle = response.data.result.data.life_cycle_json;
-                console.log(lifeCycle, "lifeCycle");
+                console.log(response.data.result.data, "TraceIdSearch");
                 self.traceId = lifeCycle.traceId;
                 self.traceName = lifeCycle.traceName;
                 self.startTime = lifeCycle.startTime;
@@ -702,8 +702,9 @@
                 })
                 self.hideLoader();
               } else {
-                alert("No records found");
                 self.hideLoader();
+                self.showNoRecords();
+                $("#trace_id").val('');
               }
             })
             .catch(function (error) {
