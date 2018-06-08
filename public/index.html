@@ -686,9 +686,9 @@
                 console.log(lifeCycle, "lifeCycle");
                 self.traceId = lifeCycle.traceId;
                 self.traceName = lifeCycle.traceName;
-                self.startTime = "Start time here";
-                self.endTime = "End time here";
-                self.duration = "Duration here";
+                self.startTime = lifeCycle.startTime;
+                self.endTime = lifeCycle.endTime;
+                self.duration = lifeCycle.duration;
                 var life_cycle_json = response.data.result.data.life_cycle_json.spanList;
                 $("#trace-details").show();
                 $(".accordion").show();
