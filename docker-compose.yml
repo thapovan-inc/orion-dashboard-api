@@ -24,6 +24,7 @@ services:
       ENABLE_TCP_SERVER: "true"
       KAFKA_HOST: '172.30.0.12:29092'
       KAFKA_TOPIC: 'trace-summary-json'
+      KAFKA_GROUP_TOPIC: 'KafkaTraceGroupTopic'
       ELASTICSEARCH_HOST: '172.30.0.36:9200'
       REDIS_HOST: redis
       REDIS_PORT: 6379
