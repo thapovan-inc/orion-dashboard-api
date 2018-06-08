@@ -855,7 +855,7 @@
         callbacks: {
           label: function (tooltipItem, data) {
             var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-            return value.traceId+value.traceName;
+            return value.traceName;
           }
         }
       }
