@@ -27,7 +27,7 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
     const api = ActionHero.api
 
     var startTime = (data.params.startTime == undefined) ? '' : new Date(data.params.startTime).getTime();
-    var endTime = isNaN(data.params.endTime == undefined) ? '' : new Date(data.params.endTime).getTime();
+    var endTime = (data.params.endTime == undefined) ? '' : new Date(data.params.endTime).getTime();
     var status = (data.params.status == undefined) ? '' : data.params.status;
     var ip = (data.params.ip == undefined) ? '' : data.params.ip;
 
