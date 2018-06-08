@@ -51,16 +51,16 @@
             <div class="search-options">
               <div class="label">Filter By</div>
               <div class="checkbox">
-                <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
-                <label for="failed">Failed</label>
-              </div>
-              <div class="checkbox">
                 <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
                 <label for="passed">Passed</label>
               </div>
               <div class="checkbox">
                 <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
                 <label for="slow">Slow</label>
+              </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
+                <label for="failed">Failed</label>
               </div>
             </div>
             <div class="form-group">
@@ -326,20 +326,6 @@
               var status = trace.status;
               switch (status) {
                 case 'PASS':
-                  app.myScatter.data.datasets[1].data.push({
-                    x: trace.requestTime,
-                    y: trace.duration,
-                    traceId: trace.traceId,
-                    traceName: trace.traceName,
-                    startTime: trace.startTime,
-                    endTime: trace.endTime,
-                    duration: trace.duration
-                  })
-                  if (app.myScatter.data.datasets[1].data.length > 50) {
-                    app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
-                  }
-                  break;
-                case 'FAIL':
                   app.myScatter.data.datasets[0].data.push({
                     x: trace.requestTime,
                     y: trace.duration,
@@ -353,7 +339,7 @@
                     app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
                   }
                   break;
-                case 'SLOW':
+                case 'FAIL':
                   app.myScatter.data.datasets[2].data.push({
                     x: trace.requestTime,
                     y: trace.duration,
@@ -365,6 +351,20 @@
                   })
                   if (app.myScatter.data.datasets[2].data.length > 50) {
                     app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                  }
+                  break;
+                case 'SLOW':
+                  app.myScatter.data.datasets[1].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[1].data.length > 50) {
+                    app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
                   }
                   break;
               }
@@ -387,20 +387,6 @@
                       var status = trace.status;
                       switch (status) {
                           case 'PASS':
-                              app.myScatter.data.datasets[1].data.push({
-                                  x: trace.requestTime,
-                                  y: trace.duration,
-                                  traceId: trace.traceId,
-                                  traceName: trace.traceName,
-                                  startTime: trace.startTime,
-                                  endTime: trace.endTime,
-                                  duration: trace.duration
-                              })
-                              if (app.myScatter.data.datasets[1].data.length > 50) {
-                                  app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
-                              }
-                              break;
-                          case 'FAIL':
                               app.myScatter.data.datasets[0].data.push({
                                   x: trace.requestTime,
                                   y: trace.duration,
@@ -414,7 +400,7 @@
                                   app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
                               }
                               break;
-                          case 'SLOW':
+                          case 'FAIL':
                               app.myScatter.data.datasets[2].data.push({
                                   x: trace.requestTime,
                                   y: trace.duration,
@@ -426,6 +412,20 @@
                               })
                               if (app.myScatter.data.datasets[2].data.length > 50) {
                                   app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                              }
+                              break;
+                          case 'SLOW':
+                              app.myScatter.data.datasets[1].data.push({
+                                  x: trace.requestTime,
+                                  y: trace.duration,
+                                  traceId: trace.traceId,
+                                  traceName: trace.traceName,
+                                  startTime: trace.startTime,
+                                  endTime: trace.endTime,
+                                  duration: trace.duration
+                              })
+                              if (app.myScatter.data.datasets[1].data.length > 50) {
+                                  app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
                               }
                               break;
                       }
@@ -784,6 +784,7 @@
                     console.log(app.myScatter.data.datasets[2].data);
                     app.myScatter.update();
                     //app.myScatter.render();
+                    self.hideLoader()
                 }
                 else {
                     self.showNoRecords();
@@ -792,7 +793,7 @@
             })
           } else {
             console.log("Search filter values are empty!!!");
-//            this.hideLoader()
+              self.hideLoader()
           }
 
           /* if (this.keyword.trim().length === 0) {
@@ -852,16 +853,7 @@
     var color = Chart.helpers.color;
     var scatterChartData = {
 
-      datasets: [{
-          label: 'Failed',
-          backgroundColor: '#F82422',
-          pointBackgroundColor: '#F82422',
-          borderWidth: 1,
-          pointRadius: 10,
-          pointHoverRadius: 10,
-          pointBorderColor: '#F82422',
-          data: []
-        },
+      datasets: [
         {
           label: 'Passed',
           backgroundColor: '#39f83b',
@@ -881,7 +873,17 @@
           pointHoverRadius: 10,
           pointBorderColor: '#f8e315',
           data: []
-        }
+        },
+        {
+            label: 'Failed',
+            backgroundColor: '#F82422',
+            pointBackgroundColor: '#F82422',
+            borderWidth: 1,
+            pointRadius: 10,
+            pointHoverRadius: 10,
+            pointBorderColor: '#F82422',
+            data: []
+        },
       ]
     };
     var chartOptions = {
