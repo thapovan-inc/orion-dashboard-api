@@ -574,10 +574,12 @@
           let dates = dateRange.split(' - ');
           let startDate = dates[0];
           let endDate = dates[1];
-          let startWholedate = new Date(startDate);
+          /*  let startWholedate = new Date(startDate);
           let startTime = startWholedate.getTime();
           let endWholedate = new Date(endDate);
-          let endTime = endWholedate.getTime();
+          let endTime = endWholedate.getTime(); */
+          let startTime = startDate;
+          let endTime = endDate;
 
           let filterObj = {};
 
