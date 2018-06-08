@@ -787,10 +787,17 @@
     var chartOptions = {
       scales: {
         yAxes: [{
-          type: 'linear',
+          type: 'logarithmic',
           display: true,
           ticks: {
-            beginAtZero: true
+            beginAtZero: true,
+            callback: function(...args) {
+              const value = ChartJS.Ticks.formatters.logarithmic.call(this, ...args);
+              if (value.length) {
+                return Number(value).toLocaleString()
+              }
+              return value;
+            }
           },
           scaleLabel: {
             display: true,
