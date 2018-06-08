@@ -246,9 +246,8 @@
             x.className = x.className.replace("show", "");
           }, 3000);
         },
-        loadDashboardData: function (message) {
-          var trace = JSON.parse(message.message)
-          console.log(trace);
+        loadDashboardData: function (trace) {
+
           var type = trace.type;
           if (type == 'liveFeed') {
             if (trace.traceId && trace.status) {
@@ -785,7 +784,10 @@
                     app.myScatter.update();
                     //app.myScatter.render();
                 }
-                self.hideLoader();
+                else {
+                    self.showNoRecords();
+                    self.hideLoader();
+                }
             })
           } else {
             console.log("Search filter values are empty!!!");
