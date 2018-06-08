@@ -17,14 +17,14 @@
     <header>
       <div class="left-col">
         <div class="logo">
-            <div class="orion-logo"></div>
+          <div class="orion-logo"></div>
         </div>
       </div>
       <div class="right-col">
         <div class="user-details">
           <div class="user-info">
             <p>Welcome Vaidy!</p>
-            <p>Jun 8 Friday</p>
+            <p>{{ todayDate }}</p>
           </div>
           <div class="thumb">
             <img src="images/avatar.png" alt="Vaidy" />
@@ -48,36 +48,39 @@
               <i class="icon-dashboard"></i> Dashboard</h2>
           </div>
           <div class="search-filters">
-              <div class="search-options">
+            <div class="search-options">
               <div class="label">Filter By</div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
-              <label for="passed">Passed</label>
-            </div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
-              <label for="slow">Slow</label>
-            </div>
-            <div class="checkbox">
-              <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
-              <label for="failed">Failed</label>
-            </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="failed" type="checkbox" value="FAIL">
+                <label for="failed">Failed</label>
               </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="passed" type="checkbox" value="PASS">
+                <label for="passed">Passed</label>
+              </div>
+              <div class="checkbox">
+                <input name="filterby" class="logStatus" id="slow" type="checkbox" value="SLOW">
+                <label for="slow">Slow</label>
+              </div>
+            </div>
             <div class="form-group">
               <!-- <input type="text" name="location" value="Location" /> -->
               <input type="text" name="ip" id="ip" />
-                <div class="date-textbox">
+              <div class="date-textbox">
                 <input type="text" id="date-time" name="datetimes" />
-                    <a href="javascript:void(0)" class="clear-date" id="resetDate" @click="resetDate()">&times;</a>
-                </div>
+                <a href="javascript:void(0)" class="clear-date" id="resetDate" @click="resetDate()">&times;</a>
+              </div>
               <div class="buttons">
                 <a href="javascript:void(0)" title="Search" class="btn-search" id="search_filter" @click="searchFilter()">
-                  <i class="icon-search-white"></i></a>
+                  <i class="icon-search-white"></i>
+                </a>
                 <a href="javascript:void(0)" title="Reset" class="btn-reset" id="reset_filter" @click="resetFilter()">
-                  <i class="icon-reset"></i></a>
+                  <i class="icon-reset"></i>
+                </a>
               </div>
             </div>
           </div>
+          <div id="snackbar">No Records found</div>
         </div>
 
         <div class="main-wrapper">
@@ -163,6 +166,7 @@
         serviceName: null,
         traceId: null,
         traceName: null,
+        todayDate: moment().format('MMM D dddd'),
         model: null,
         phoneType: null,
         brand: null,
@@ -231,8 +235,148 @@
               })
               .catch(function (error) {
                 console.log(error);
-                  self.hideLoader();
+                self.hideLoader();
               });
+          }
+        },
+        showNoRecords: function () {
+          var x = document.getElementById("snackbar");
+          x.className = "show";
+          setTimeout(function () {
+            x.className = x.className.replace("show", "");
+          }, 3000);
+        },
+        loadDashboardData: function (message) {
+          var trace = JSON.parse(message.message)
+          console.log(JSON.stringify(trace));
+          var type = trace.type;
+          if (type == 'liveFeed') {
+            if (trace.traceId && trace.status) {
+              var status = trace.status;
+              app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.filter((obj) => {
+                return obj && obj['traceId'] !== trace.traceId
+              });
+              app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
+                return obj && obj['traceId'] !== trace.traceId
+              });
+              app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.filter((obj) => {
+                return obj && obj['traceId'] !== trace.traceId
+              });
+              switch (status) {
+                case 'PASS':
+                  app.myScatter.data.datasets[1].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[1].data.length > 50) {
+                    app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
+                  }
+                  break;
+                case 'FAIL':
+                  app.myScatter.data.datasets[0].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[0].data.length > 50) {
+                    app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
+                  }
+                  break;
+                case 'SLOW':
+                  app.myScatter.data.datasets[2].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[2].data.length > 50) {
+                    app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                  }
+                  break;
+              }
+              app.myScatter.update();
+            }
+          } else {
+            if (trace.data) {
+              //console.log('pass:' + JSON.stringify(trace.data));
+              app.api = trace.data;
+              app.myScatter.update();
+            }
+          }
+        },
+        loadDashboardDataBySearch: function (trace) {
+          console.log(trace);
+          var type = trace.type;
+
+          console.log("search Type:" + type);
+          if (type == 'searchData') {
+            if (trace.traceId && trace.status) {
+              console.log("search Type:" + trace.status);
+              var status = trace.status;
+              switch (status) {
+                case 'PASS':
+                  app.myScatter.data.datasets[1].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[1].data.length > 50) {
+                    app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
+                  }
+                  break;
+                case 'FAIL':
+                  app.myScatter.data.datasets[0].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[0].data.length > 50) {
+                    app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
+                  }
+                  break;
+                case 'SLOW':
+                  app.myScatter.data.datasets[2].data.push({
+                    x: trace.requestTime,
+                    y: trace.duration,
+                    traceId: trace.traceId,
+                    traceName: trace.traceName,
+                    startTime: trace.startTime,
+                    endTime: trace.endTime,
+                    duration: trace.duration
+                  })
+                  if (app.myScatter.data.datasets[2].data.length > 50) {
+                    app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.splice(1);
+                  }
+                  break;
+              }
+              app.myScatter.update();
+            }
+          } else {
+            if (trace.data) {
+              //console.log('pass:' + JSON.stringify(trace.data));
+              app.api = trace.data;
+              app.myScatter.update();
+            }
           }
         },
         loadDashboardData: function (trace) {
@@ -574,10 +718,12 @@
           let dates = dateRange.split(' - ');
           let startDate = dates[0];
           let endDate = dates[1];
-          let startWholedate = new Date(startDate);
+          /*  let startWholedate = new Date(startDate);
           let startTime = startWholedate.getTime();
           let endWholedate = new Date(endDate);
-          let endTime = endWholedate.getTime();
+          let endTime = endWholedate.getTime(); */
+          let startTime = startDate;
+          let endTime = endDate;
 
           let filterObj = {};
 
@@ -607,11 +753,11 @@
 
           if (Object.keys(filterObj).length) {
             console.log("inside axios");
-//            var data = {
-//                'ip': '172.18.0.2'
-//            };
+            //            var data = {
+            //                'ip': '172.18.0.2'
+            //            };
             var header = {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
             }
 
             this.showLoader();
@@ -801,15 +947,15 @@
       },
       responsive: true,
       maintainAspectRatio: false,
-        tooltips: {
+      tooltips: {
         callbacks: {
-            label: function (tooltipItem, data) {
-                var label = data.datasets[tooltipItem.datasetIndex].label;
-                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                return value.traceName;
-            }
+          label: function (tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label;
+            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+            return value.traceName;
+          }
         }
-    }
+      }
     };
 
     $(document).ready(function () {

@@ -66,23 +66,19 @@ module.exports = class TraceInfoById extends ActionHero.Action {
           traceLabelStatus = 'success'
         }
       }
+
+      respJson.life_cycle_json['duration'] = (traceDuration <= 0) ? 0 : traceDuration;
       respJson.life_cycle_json['status'] = traceStatus;
       respJson.life_cycle_json['labelStatus'] = traceLabelStatus;
 
-      if(respJson.life_cycle_json.startTime<=0 || respJson.life_cycle_json.endTime<=0) {
-        respJson.life_cycle_json['duration'] = "Unknown";
-      } else {
-        respJson.life_cycle_json['duration'] = traceDuration +" ms";
-      }
-
       if(respJson.life_cycle_json.startTime>0) {
-        respJson.life_cycle_json.startTime = dateFormat(respJson.life_cycle_json.startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        respJson.life_cycle_json.startTime = dateFormat(respJson.life_cycle_json.startTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
       } else {
         respJson.life_cycle_json.startTime = "Unknown";
       }
 
       if(respJson.life_cycle_json.endTime>0) {
-        respJson.life_cycle_json.endTime = dateFormat(respJson.life_cycle_json.endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+        respJson.life_cycle_json.endTime = dateFormat(respJson.life_cycle_json.endTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
       } else {
         respJson.life_cycle_json.endTime = "Unknown";
       }
@@ -111,22 +107,18 @@ module.exports = class TraceInfoById extends ActionHero.Action {
             labelStatus = 'success'
           }
         }
+        arraySpanList[i]['duration'] = (duration <= 0) ? 0 : duration;
         arraySpanList[i]['status'] = status;
         arraySpanList[i]['labelStatus'] = labelStatus;
 
         if(arraySpanList[i].startTime>0) {
-          arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm');
+          arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
         } else {
           arraySpanList[i].startTime = "Unknown";
         }
 
-        if(arraySpanList[i].startTime<=0 || arraySpanList[i].endTime<=0) {
-          arraySpanList[i]['duration'] = "Unknown";
-        } else {
-          arraySpanList[i]['duration'] = duration +" ms";
-        }
         if(arraySpanList[i].endTime>0) {
-          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm');
+          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
         } else {
           arraySpanList[i].endTime = "Unknown";
         }
