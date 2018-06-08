@@ -169,7 +169,7 @@
         screenSize: null,
         androidVersion: null,
         location: null,
-        status: 'success',
+        status: null,
         myScatter: null,
         accodion: {
           data: []
@@ -235,12 +235,12 @@
               });
           }
         },
-        loadDashboardData: function (message) {
-              var trace = JSON.parse(message.message)
-              console.log(JSON.stringify(trace));
+        loadDashboardData: function (trace) {
+
               var type = trace.type;
               if (type == 'liveFeed') {
                   if (trace.traceId && trace.status) {
+                      console.log("bobble Status= " + trace.status);
                       var status = trace.status;
                       switch (status) {
                           case 'PASS':
@@ -297,13 +297,10 @@
               }
           },
           loadDashboardDataBySearch: function (trace) {
-            console.log(trace);
               var type = trace.type;
-
-              console.log( "search Type:" +type);
               if (type == 'searchData') {
                   if (trace.traceId && trace.status) {
-                      console.log( "search Type:" +trace.status);
+                      console.log( "Search Bobble Status:" +trace.status);
                       var status = trace.status;
                       switch (status) {
                           case 'PASS':
@@ -314,7 +311,8 @@
                                   traceName: trace.traceName,
                                   startTime: trace.startTime,
                                   endTime: trace.endTime,
-                                  duration: trace.duration
+                                  duration: trace.duration,
+                                  trace:trace
                               })
                               if (  app.myScatter.data.datasets[1].data.length > 50) {
                                   app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.splice(1);
@@ -328,7 +326,8 @@
                                   traceName: trace.traceName,
                                   startTime: trace.startTime,
                                   endTime: trace.endTime,
-                                  duration: trace.duration
+                                  duration: trace.duration,
+                                  trace:trace
                               })
                               if (app.myScatter.data.datasets[0].data.length > 50) {
                                   app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.splice(1);
@@ -349,7 +348,6 @@
                               }
                               break;
                       }
-                      app.myScatter.update();
                   }
               } else {
                   if (trace.data) {
@@ -358,6 +356,9 @@
                       app.myScatter.update();
                   }
               }
+              this.$nextTick(function () {
+                  console.log(this.$el.textContent);
+              })
           },
         jsonPass(key, value) {
           if ($("#span_" + key).hasClass('collapse')) { //expand the li and showsss
@@ -617,15 +618,28 @@
             var self = this;
 
             axios.post('/api/traces', filterObj, header).then(function(response){
+                //.myScatter.stop();
                 app.liveData = false;
+//                app.myScatter.clear();
 
                 console.log("live data : "+ app.liveData);
                 var resp = response.data.result.data;
-                for(var i=0;i<resp.length; i++){
-                    app.loadDashboardDataBySearch(resp[i]);
+                if (resp.length > 0) {
+                    app.myScatter.data.datasets[0].data = [];
+                    app.myScatter.data.datasets[1].data = [];
+                    app.myScatter.data.datasets[2].data = [];
+                    console.log("search lenth" + resp.length );
+                    for (var i = 0; i < resp.length; i++) {
+                        app.loadDashboardDataBySearch(resp[i]);
+                    }
+                    console.log("search update")
+                    console.log(app.myScatter.data.datasets[0].data);
+                    console.log(app.myScatter.data.datasets[1].data);
+                    console.log(app.myScatter.data.datasets[2].data);
+                    app.myScatter.update();
+                    //app.myScatter.render();
                 }
-                app.myScatter.stop();
-              self.hideLoader();
+                self.hideLoader();
             })
           } else {
             console.log("Search filter values are empty!!!");
@@ -675,9 +689,12 @@
             $("#date-time").val('');
             $("#ip").val('');
             $(".logStatus").prop('checked',false);
-            app.myScatter.update();
+//            app.myScatter.update();
+            app.myScatter.data.datasets[0].data = [];
+            app.myScatter.data.datasets[1].data = [];
+            app.myScatter.data.datasets[2].data = [];
             app.liveData= true;
-            app.myScatter.reset();
+            app.myScatter.update();
         }
 
       }
@@ -812,6 +829,7 @@
       });
 
       boot();
+
       var ctx = document.getElementById('livefeed').getContext('2d');
       app.myScatter = Chart.Scatter(ctx, {
         data: scatterChartData,
@@ -865,8 +883,10 @@
 
     var appendMessage = function (message) {
 
+console.log(message);
+        var trace = JSON.parse(message.message);
         if (app.liveData == true) {
-           app.loadDashboardData(message)
+           app.loadDashboardData(trace)
         }
     }
   </script>
