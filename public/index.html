@@ -861,6 +861,7 @@
           borderWidth: 1,
           pointRadius: 8,
           pointHoverBackgroundColor: '#0f9747',
+          pointHoverBorderColor: '#0f9747',
           pointHoverRadius: 10,
           pointBorderColor: '#39f83b',
           data: []
@@ -872,7 +873,8 @@
           borderWidth: 1,
           pointRadius: 8,
           pointHoverBackgroundColor: '#ff9800',
-          pointHoverRadius: 10,
+          pointHoverBorderColor: '#ff9800',
+          pointHoverRadius: 9,
           pointBorderColor: '#f8e315',
           data: []
         },
@@ -882,8 +884,9 @@
             pointBackgroundColor: '#F82422',
             borderWidth: 1,
             pointRadius: 8,
-            pointHoverRadius: 10,
+            pointHoverRadius: 9,
             pointHoverBackgroundColor:'#d62c20',
+          pointHoverBorderColor:'#d62c20',
             pointBorderColor: '#F82422',
             data: []
         },
@@ -956,7 +959,7 @@
       responsive: true,
       maintainAspectRatio: false,
       tooltips: {
-        caretPadding: 10,
+        caretPadding: 6,
         callbacks: {
           label: function (tooltipItem, data) {
             var label = data.datasets[tooltipItem.datasetIndex].label;
