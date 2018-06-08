@@ -320,10 +320,10 @@
                       app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
                         return obj && obj.traceId !== trace.traceId
                       });
-                      app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[1].data.filter((obj) => {
+                      app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.filter((obj) => {
                         return obj && obj.traceId !== trace.traceId
                       })
-                     app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[2].data.filter((obj) => {
+                     app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.filter((obj) => {
                         return obj && obj.traceId !== trace.traceId
                       })
                       switch (status) {
