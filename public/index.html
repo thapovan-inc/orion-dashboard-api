@@ -316,6 +316,15 @@
                   if (trace.traceId && trace.status) {
                       console.log("bobble Status= " + trace.status);
                       var status = trace.status;
+                      app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
+                        return obj && obj.traceId !== trace.traceId
+                      });
+                      app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[1].data.filter((obj) => {
+                        return obj && obj.traceId !== trace.traceId
+                      })
+                     app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[2].data.filter((obj) => {
+                        return obj && obj.traceId !== trace.traceId
+                      })
                       switch (status) {
                           case 'PASS':
                               app.myScatter.data.datasets[0].data.push({
