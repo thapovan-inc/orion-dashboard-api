@@ -85,7 +85,7 @@
 
         <div class="main-wrapper">
           <section id="charts">
-            <canvas id="livefeed" style="height:500px !important;" v-on:click="getAccordionDetails">
+            <canvas id="livefeed" style="height:500px !important;" v-on:click="getAccordionDetails(event)">
 
             </canvas>
           </section>
@@ -197,6 +197,8 @@
       methods: {
         getAccordionDetails: function (event) {
           var activePoints = this.myScatter.getElementsAtEvent(event);
+          console.log("Event object");
+          console.log(event);
           var firstPoint = activePoints[0];
           if (firstPoint !== undefined) {
             this.showLoader();
