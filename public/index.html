@@ -248,7 +248,7 @@
         },
         loadDashboardData: function (message) {
           var trace = JSON.parse(message.message)
-          console.log(JSON.stringify(trace));
+          console.log(trace);
           var type = trace.type;
           if (type == 'liveFeed') {
             if (trace.traceId && trace.status) {
