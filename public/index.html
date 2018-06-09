@@ -353,6 +353,14 @@
                     newArr2.forEach((d) => {
                       app.myScatter.data.datasets[2].data.push(d);
                     })
+                    try {
+                      var startTime = new Date(trace.requestTime)
+                      if(startTime.getTime() == 0) {
+                        trace.requestTime = new Date().toUTCString()
+                      }
+                    } catch (e) {
+                      trace.requestTime = new Date().toUTCString()
+                    }
                     console.log(trace);
                       switch (status) {
                           case 'PASS':
