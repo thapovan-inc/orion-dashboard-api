@@ -210,8 +210,16 @@
             this.traceId = value.traceId;
             this.traceName = value.traceName;
             this.duration = value.duration;
-            this.startTime = value.startTime;
-            this.endTime = value.endTime;
+            if (value.startTime === "Unknown") {
+              this.startTime = value.startTime
+            } else {
+              this.startTime = new Date(value.startTime+" UTC").toLocaleString();
+            }
+            if (value.endTime === "Unknown") {
+              this.endTime = value.endTime
+            } else {
+              this.endTime = new Date(value.endTime+" UTC").toLocaleString();
+            }
             var self = this;
             axios.get('/api', {
                 params: {
