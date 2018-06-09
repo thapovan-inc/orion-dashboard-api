@@ -255,6 +255,7 @@
                 console.log("search Type:" + trace.status);
                 console.log("search Traceid : " + trace.traceId);
               var status = trace.status;
+              console.log(trace);
               switch (status) {
                 case 'PASS':
                   app.myScatter.data.datasets[0].data.push({
@@ -344,6 +345,7 @@
                     newArr2.forEach((d) => {
                       app.myScatter.data.datasets[2].data.push(d);
                     })
+                    console.log(trace);
                       switch (status) {
                           case 'PASS':
                               app.myScatter.data.datasets[0].data.push({
