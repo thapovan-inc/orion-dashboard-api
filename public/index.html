@@ -619,8 +619,9 @@
           let startTime = startWholedate.getTime();
           let endWholedate = new Date(endDate);
           let endTime = endWholedate.getTime(); */
-          let startTime = startDate;
-          let endTime = endDate;
+          console.log("startDate "+startDate+" endDate"+endDate);
+          let startTime = new Date(startDate).toUTCString();
+          let endTime = new Date(endDate).toUTCString();
 
           let filterObj = {};
 
