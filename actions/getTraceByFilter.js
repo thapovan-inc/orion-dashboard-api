@@ -91,7 +91,7 @@ module.exports = class TraceInfoBySearchTerm extends ActionHero.Action {
             traceStatus = 'PASS'
           }
         }
-        traceData['duration'] = (traceDuration <=0 ) ? 0 : traceDuration;
+        traceData['duration'] = (traceDuration <=0 || traceDuration >86400000) ? 0 : traceDuration;
         traceData['requestTime'] = new Date(traceData.startTime/1000).toUTCString();
         traceData['status'] = traceStatus
         traceData['serviceName'] = (traceData.traceName == undefined) ? '' : changeCase.titleCase(traceData.traceName)
