@@ -326,33 +326,15 @@
                       console.log("bobble Status= " + trace.status);
                       console.log("bobble TraceId= " + trace.traceId);
                       var status = trace.status;
-                      var newArr0 = app.myScatter.data.datasets[0].data.filter((obj) => {
+                    app.myScatter.data.datasets[0].data = app.myScatter.data.datasets[0].data.filter((obj) => {
                       return obj && obj.traceId !== trace.traceId
                     });
-                      app.myScatter.data.datasets[0].data.forEach((_) => {
-                        app.myScatter.data.datasets[0].data.pop()
-                      })
-                    newArr0.forEach((d) => {
-                      app.myScatter.data.datasets[0].data.push(d);
-                    })
-                    var newArr1 = app.myScatter.data.datasets[1].data.filter((obj) => {
+                    app.myScatter.data.datasets[1].data = app.myScatter.data.datasets[1].data.filter((obj) => {
                       return obj && obj.traceId !== trace.traceId
                     });
-                    app.myScatter.data.datasets[1].data.forEach((_) => {
-                      app.myScatter.data.datasets[1].data.pop()
-                    })
-                    newArr1.forEach((d) => {
-                      app.myScatter.data.datasets[1].data.push(d);
-                    })
-                    var newArr2 = app.myScatter.data.datasets[2].data.filter((obj) => {
+                    app.myScatter.data.datasets[2].data = app.myScatter.data.datasets[2].data.filter((obj) => {
                       return obj && obj.traceId !== trace.traceId
                     });
-                    app.myScatter.data.datasets[2].data.forEach((_) => {
-                      app.myScatter.data.datasets[2].data.pop()
-                    })
-                    newArr2.forEach((d) => {
-                      app.myScatter.data.datasets[2].data.push(d);
-                    })
                     try {
                       var startTime = new Date(trace.requestTime)
                       if(startTime.getTime() == 0) {
