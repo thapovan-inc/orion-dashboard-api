@@ -622,7 +622,7 @@
 
           let filterObj = {};
 
-          if (startTime > 0 && endTime > 0) {
+          if (startTime != null && endTime != null) {
             filterObj.startTime = startTime;
             filterObj.endTime = endTime;
             // queryString += "&startTime=" + startTime + "&endTime=" + endTime;
@@ -645,6 +645,8 @@
             filterObj.status = statusStr;
             // queryString +="&statusStr="+statusStr;
           }
+
+          console.log(filterObj);
 
           if (Object.keys(filterObj).length) {
             console.log("inside axios");
@@ -684,7 +686,7 @@
             })
           } else {
             console.log("Search filter values are empty!!!");
-              self.hideLoader()
+              this.hideLoader()
           }
 
           /* if (this.keyword.trim().length === 0) {
