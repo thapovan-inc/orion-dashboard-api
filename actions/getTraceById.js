@@ -72,13 +72,13 @@ module.exports = class TraceInfoById extends ActionHero.Action {
       respJson.life_cycle_json['labelStatus'] = traceLabelStatus;
 
       if(respJson.life_cycle_json.startTime>0) {
-        respJson.life_cycle_json.startTime = dateFormat(respJson.life_cycle_json.startTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
+        respJson.life_cycle_json.startTime = new Date(respJson.life_cycle_json.startTime/1000).toUTCString();
       } else {
         respJson.life_cycle_json.startTime = "Unknown";
       }
 
       if(respJson.life_cycle_json.endTime>0) {
-        respJson.life_cycle_json.endTime = dateFormat(respJson.life_cycle_json.endTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
+        respJson.life_cycle_json.endTime = new Date(respJson.life_cycle_json.endTime/1000).toUTCString();
       } else {
         respJson.life_cycle_json.endTime = "Unknown";
       }
@@ -112,13 +112,13 @@ module.exports = class TraceInfoById extends ActionHero.Action {
         arraySpanList[i]['labelStatus'] = labelStatus;
 
         if(arraySpanList[i].startTime>0) {
-          arraySpanList[i].startTime = dateFormat(arraySpanList[i].startTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
+          arraySpanList[i].startTime = new Date(arraySpanList[i].startTime/1000).toUTCString();
         } else {
           arraySpanList[i].startTime = "Unknown";
         }
 
         if(arraySpanList[i].endTime>0) {
-          arraySpanList[i].endTime = dateFormat(arraySpanList[i].endTime/1000, 'mm/dd/yyyy hh:ss:mm TT');
+          arraySpanList[i].endTime = new Date(arraySpanList[i].endTime/1000).toUTCString();
         } else {
           arraySpanList[i].endTime = "Unknown";
         }
