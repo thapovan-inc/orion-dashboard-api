@@ -631,7 +631,7 @@
 
           let filterObj = {};
 
-          if (startTime != null && endTime != null) {
+          if ((startTime != null && startTime !== "Invalid Date") && (endTime != null && endTime !== "Invalid Date")) {
             filterObj.startTime = startTime;
             filterObj.endTime = endTime;
             // queryString += "&startTime=" + startTime + "&endTime=" + endTime;
