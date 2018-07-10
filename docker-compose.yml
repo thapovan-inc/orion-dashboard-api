@@ -16,16 +16,16 @@ services:
     links:
       - redis
     extra_hosts:
-     - "kafka:172.30.0.12"
-     - "zookeeper:172.30.0.12"
-     - "elasticsearchhost:172.30.0.36"
+     - "kafka:172.30.0.226"
+     - "zookeeper:172.30.0.226"
+     - "elasticsearchhost:172.30.0.130"
     environment:
       TCP_PORTS: 8080,5000
       ENABLE_TCP_SERVER: "true"
       KAFKA_HOST: '172.30.0.12:29092'
       KAFKA_TOPIC: 'trace-summary-json'
       KAFKA_GROUP_TOPIC: 'KafkaTraceGroupTopic'
-      ELASTICSEARCH_HOST: '172.30.0.36:9200'
+      ELASTICSEARCH_HOST: '172.30.0.130:9200'
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_DB: 0
